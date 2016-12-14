@@ -1,0 +1,9 @@
+set daemon 3
+set httpd port 2812 and
+  allow localhost
+
+check process foo
+  with pidfile /root/go/src/github.com/pivotal-cf/redisutils/docker/jobs/foo.pid
+  start program "/root/go/src/github.com/pivotal-cf/redisutils/docker/jobs/foo start" with timeout 60 seconds
+  stop program "/root/go/src/github.com/pivotal-cf/redisutils/docker/jobs/foo stop" with timeout 60 seconds
+  group root

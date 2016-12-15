@@ -1,7 +1,9 @@
 package monit
 
 import (
+	"errors"
 	"path/filepath"
+	"strings"
 
 	"github.com/BooleanCat/igo/ios/iexec"
 	. "github.com/onsi/ginkgo"
@@ -20,7 +22,7 @@ var _ = Describe("monit", func() {
 
 	Describe("#GetSummary", func() {
 		var (
-			summary        []byte
+			summary        map[string]int
 			getSummaryErr  error
 			command        string
 			args           []string
@@ -43,7 +45,14 @@ var _ = Describe("monit", func() {
 		})
 
 		It("returns the output of `monit summary`", func() {
-			Expect(summary).To(Equal(exampleSummary))
+			expectedSummary := map[string]int{
+				"process-watcher":   StatusRunning,
+				"process-destroyer": StatusRunning,
+				"cf-redis-broker":   StatusRunning,
+				"broker-nginx":      StatusRunning,
+				"route_registrar":   StatusRunning,
+			}
+			Expect(summary).To(Equal(expectedSummary))
 		})
 
 		It("prepares to execute the monit binary", func() {
@@ -56,6 +65,34 @@ var _ = Describe("monit", func() {
 
 		It("runs `monit summary`", func() {
 			Expect(pureFake.Cmd.CombinedOutputCallCount()).To(Equal(1))
+		})
+
+		It("doesn't specify a monitrc path when calling `monit summary`", func() {
+			joinedArgs := strings.Join(args, " ")
+			Expect(joinedArgs).NotTo(ContainSubstring("-c"))
+		})
+
+		Context("when combined output returns an error", func() {
+			combinedOutputErr := errors.New("CombinedOutput failed")
+
+			BeforeEach(func() {
+				pureFake.Cmd.CombinedOutputReturns(nil, combinedOutputErr)
+			})
+
+			It("returns the error", func() {
+				Expect(getSummaryErr).To(MatchError(combinedOutputErr))
+			})
+		})
+
+		Context("when a monitrc path is configured", func() {
+			BeforeEach(func() {
+				monit.MonitrcPath = "/foo/bar"
+			})
+
+			It("specifies that path when calling `monit summary`", func() {
+				joinedArgs := strings.Join(args, " ")
+				Expect(joinedArgs).To(ContainSubstring("-c " + monit.MonitrcPath))
+			})
 		})
 	})
 })

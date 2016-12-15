@@ -11,6 +11,12 @@ while [[ $# -gt 0 ]]; do
         UNITONLY=true
       ;;
 
+      --)
+        shift
+        GINKGO_ARGS="$@"
+        break
+      ;;
+
       *)
         echo "Usage: test.sh [--unit-only]"
         exit 1
@@ -24,6 +30,8 @@ if [ "$UNITONLY" = true ]; then
   exit $?
 fi
 
+GINKGO_ARGS=${GINKGO_ARGS:-". -r --race"}
+
 echo "Building docker image..."
 $DIR/docker-build.sh > /dev/null
 
@@ -32,5 +40,5 @@ pushd $ROOT > /dev/null
 docker run \
   -v $ROOT:/home/vcap/redisutils \
   -i -t cflondonservices/redisutils \
-  /home/vcap/test.sh
+  /home/vcap/test.sh ${GINKGO_ARGS}
 popd > /dev/null

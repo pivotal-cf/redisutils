@@ -2,11 +2,10 @@ package monit
 
 import (
 	"io/ioutil"
+	"testing"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-
-	"testing"
 )
 
 func TestMonit(t *testing.T) {

@@ -7,4 +7,14 @@ check process foo
   with pidfile /home/vcap/jobs/foo.pid
   start program "/home/vcap/jobs/foo start" with timeout 60 seconds
   stop program "/home/vcap/jobs/foo stop" with timeout 60 seconds
-  group vcap
+
+check process bar
+  with pidfile /home/vcap/jobs/bar.pid
+  depends on foo
+  start program "/home/vcap/jobs/bar start" with timeout 60 seconds
+  stop program "/home/vcap/jobs/bar stop" with timeout 60 seconds
+
+check process baz
+  with pidfile /home/vcap/jobs/baz.pid
+  start program "/home/vcap/jobs/baz start" with timeout 60 seconds
+  stop program "/home/vcap/jobs/baz stop" with timeout 60 seconds

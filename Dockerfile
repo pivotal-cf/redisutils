@@ -14,7 +14,7 @@ RUN chown vcap:vcap $VCAP_HOME/bin
 ADD docker/jobs $VCAP_HOME/jobs
 ADD docker/monitrc $VCAP_HOME/monitrc
 RUN chmod 700 $VCAP_HOME/monitrc
-RUN chmod +rx $VCAP_HOME/jobs/foo
+RUN chmod +rx $VCAP_HOME/jobs/foo $VCAP_HOME/jobs/bar $VCAP_HOME/jobs/baz
 RUN chown vcap:vcap $VCAP_HOME/monitrc $VCAP_HOME/jobs $VCAP_HOME/jobs/*
 
 # copy test script

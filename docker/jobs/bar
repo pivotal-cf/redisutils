@@ -1,0 +1,21 @@
+#!/bin/bash -e
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+PIDFILE=$DIR/bar.pid
+
+source $DIR/utils.sh
+
+case $1 in
+  start)
+    echo $$ > $PIDFILE
+    while true; do sleep 10000; done
+  ;;
+
+  stop)
+    kill_and_wait $PIDFILE 55
+  ;;
+
+  *)
+    echo "Usage: bar {start|stop}"
+  ;;
+esac

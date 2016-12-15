@@ -1,14 +1,14 @@
 package monit_integration_test
 
 import (
+	"fmt"
 	"os/exec"
 	"regexp"
+	"testing"
 	"time"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-
-	"testing"
 )
 
 func TestMonitIntegration(t *testing.T) {
@@ -18,27 +18,50 @@ func TestMonitIntegration(t *testing.T) {
 
 var _ = BeforeSuite(func() {
 	startMonit()
-	waitForFooRunning()
+	waitForMonitJobsToBeRunning()
 })
 
-func waitForFooRunning() {
+func waitForMonitJobsToBeRunning() {
+	waitFor(fooIsRunning)
+	waitFor(barIsRunning)
+	waitFor(bazIsRunning)
+}
+
+func waitFor(isDone func() bool) {
 	interval := time.Millisecond * 200
 	timeout := time.Second * 15
 
 	for elapsed := time.Duration(0); elapsed < timeout; elapsed = elapsed + interval {
-		if fooIsRunning() {
+		if isDone() {
 			return
 		}
 		time.Sleep(interval)
 	}
 
-	Fail("timed out waiting for monit to start")
+	Fail("timed out")
 }
 
 func fooIsRunning() bool {
+	return isRunning("foo")
+}
+
+func barIsRunning() bool {
+	return isRunning("bar")
+}
+
+func bazIsRunning() bool {
+	return isRunning("baz")
+}
+
+func isRunning(job string) bool {
 	summary := getMonitSummary()
-	pattern := regexp.MustCompile(`(?m)^Process 'foo'\s+running$`)
+	pattern := getJobRunningPattern(job)
 	return pattern.MatchString(summary)
+}
+
+func getJobRunningPattern(job string) *regexp.Regexp {
+	pattern := fmt.Sprintf(`(?m)^Process '%s'\s+running$`, job)
+	return regexp.MustCompile(pattern)
 }
 
 func startMonit() {

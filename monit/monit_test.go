@@ -22,7 +22,7 @@ var _ = Describe("monit", func() {
 
 	Describe("#GetSummary", func() {
 		var (
-			summary        map[string]int
+			summary        Statuses
 			getSummaryErr  error
 			command        string
 			args           []string
@@ -45,7 +45,7 @@ var _ = Describe("monit", func() {
 		})
 
 		It("returns the output of `monit summary`", func() {
-			expectedSummary := map[string]int{
+			expectedSummary := Statuses{
 				"process-watcher":   StatusRunning,
 				"process-destroyer": StatusRunning,
 				"cf-redis-broker":   StatusRunning,
@@ -106,7 +106,7 @@ var _ = Describe("monit", func() {
 			})
 
 			It("reports the correct process as stopped", func() {
-				expectedSummary := map[string]int{
+				expectedSummary := Statuses{
 					"process-watcher":   StatusRunning,
 					"process-destroyer": StatusStopped,
 					"cf-redis-broker":   StatusRunning,

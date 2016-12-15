@@ -6,18 +6,21 @@ import (
 	"github.com/BooleanCat/igo/ios/iexec"
 )
 
+type Status int
+type Statuses map[string]Status
+
 const (
-	StatusRunning = iota
+	StatusRunning Status = iota
 	StatusNotMonitored
 	StatusStopped
 )
 
-var statusMapping = map[string]int{
+var statusMapping = Statuses{
 	"running": StatusRunning,
 	"stopped": StatusStopped,
 }
 
-func getStatus(status string) int {
+func getStatus(status string) Status {
 	return statusMapping[status]
 }
 
@@ -33,7 +36,7 @@ func New() *Monit {
 	}
 }
 
-func (monit *Monit) GetSummary() (map[string]int, error) {
+func (monit *Monit) GetSummary() (Statuses, error) {
 	rawSummary, err := monit.getRawSummary()
 	if err != nil {
 		return nil, err
@@ -61,8 +64,8 @@ func (monit *Monit) getProcessesFromRawSummary(summary string) [][]string {
 	return pattern.FindAllStringSubmatch(summary, -1)
 }
 
-func (monit *Monit) newProcessMap(processes [][]string) map[string]int {
-	processMap := make(map[string]int)
+func (monit *Monit) newProcessMap(processes [][]string) Statuses {
+	processMap := make(Statuses)
 	for _, process := range processes {
 		processMap[process[1]] = getStatus(process[2])
 	}

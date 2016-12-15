@@ -17,7 +17,7 @@ var _ = Describe("monit", func() {
 
 	Describe("GetSummary", func() {
 		var (
-			summary       map[string]int
+			summary       monit.Statuses
 			getSummaryErr error
 		)
 
@@ -30,7 +30,7 @@ var _ = Describe("monit", func() {
 		})
 
 		It("reports processes running", func() {
-			expectedSummary := map[string]int{
+			expectedSummary := monit.Statuses{
 				"foo": monit.StatusRunning,
 				"bar": monit.StatusRunning,
 				"baz": monit.StatusRunning,

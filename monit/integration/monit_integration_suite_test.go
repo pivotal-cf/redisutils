@@ -56,7 +56,7 @@ func bazIsRunning() bool {
 func isRunning(job string) bool {
 	summary := getMonitSummary()
 	pattern := getJobRunningPattern(job)
-	return pattern.MatchString(summary)
+	return pattern.Match(summary)
 }
 
 func getJobRunningPattern(job string) *regexp.Regexp {
@@ -70,9 +70,9 @@ func startMonit() {
 	Expect(err).NotTo(HaveOccurred())
 }
 
-func getMonitSummary() string {
+func getMonitSummary() []byte {
 	cmd := exec.Command("monit", "-c", "/home/vcap/monitrc", "summary")
 	summary, err := cmd.CombinedOutput()
 	Expect(err).NotTo(HaveOccurred())
-	return string(summary)
+	return summary
 }

@@ -20,7 +20,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [ "$UNITONLY" = true ]; then
-  ginkgo monit/
+  ginkgo monit/ --race
   exit $?
 fi
 
@@ -28,4 +28,9 @@ echo "Building docker image..."
 $DIR/docker-build.sh > /dev/null
 
 echo "Running Ginkgo test suites in docker..."
-docker run -i -t cflondonservices/redisutils $PACKAGE_DIR/docker/test.sh
+pushd $ROOT > /dev/null
+docker run \
+  -v $ROOT:/home/vcap/redisutils \
+  -i -t cflondonservices/redisutils \
+  /home/vcap/test.sh
+popd > /dev/null

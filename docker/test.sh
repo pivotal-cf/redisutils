@@ -1,8 +1,10 @@
 #!/bin/bash
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-ROOT=$( dirname $DIR )
+REDISUTILS_DIR=$GOPATH/src/github.com/pivotal-cf/redisutils
 
-cd $ROOT
-godep restore
-ginkgo -r .
+cp -r $HOME/redisutils/vendor/* $GOPATH/src
+mkdir -p $REDISUTILS_DIR
+cp -r $HOME/redisutils/* $REDISUTILS_DIR
+
+cd $REDISUTILS_DIR
+ginkgo -r --race

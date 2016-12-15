@@ -17,6 +17,11 @@ RUN chmod 700 $VCAP_HOME/monitrc
 RUN chmod +rx $VCAP_HOME/jobs/foo
 RUN chown vcap:vcap $VCAP_HOME/monitrc $VCAP_HOME/jobs $VCAP_HOME/jobs/*
 
+# copy test script
+ADD docker/test.sh $VCAP_HOME/test.sh
+RUN chmod +rx $VCAP_HOME/test.sh
+RUN chown vcap:vcap $VCAP_HOME/test.sh
+
 # switch to vcap
 USER vcap
 ENV HOME /home/vcap

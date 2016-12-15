@@ -7,8 +7,8 @@ PACKAGE_DIR=/root/go/src/github.com/pivotal-cf/redisutils
 
 while [[ $# -gt 0 ]]; do
   case $1 in
-      --unit-only)
-        UNITONLY=true
+      --local)
+        LOCAL=true
       ;;
 
       --)
@@ -18,15 +18,15 @@ while [[ $# -gt 0 ]]; do
       ;;
 
       *)
-        echo "Usage: test.sh [--unit-only]"
+        echo "Usage: test.sh [--local] [-- [ginkgo_arg, ...]]"
         exit 1
       ;;
   esac
   shift
 done
 
-if [ "$UNITONLY" = true ]; then
-  ginkgo monit/ --race
+if [ "$LOCAL" = true ]; then
+  ginkgo ${GINKGO_ARGS}
   exit $?
 fi
 

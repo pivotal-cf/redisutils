@@ -94,10 +94,37 @@ var _ = Describe("monit", func() {
 				Expect(joinedArgs).To(ContainSubstring("-c " + monit.MonitrcPath))
 			})
 		})
+
+		Context("when one process is `stopped`", func() {
+			BeforeEach(func() {
+				exampleSummary = getExampleMonitSummaryOneStopped()
+				pureFake.Cmd.CombinedOutputReturns(exampleSummary, nil)
+			})
+
+			It("does not return an error", func() {
+				Expect(getSummaryErr).NotTo(HaveOccurred())
+			})
+
+			It("reports the correct process as stopped", func() {
+				expectedSummary := map[string]int{
+					"process-watcher":   StatusRunning,
+					"process-destroyer": StatusStopped,
+					"cf-redis-broker":   StatusRunning,
+					"broker-nginx":      StatusRunning,
+					"route_registrar":   StatusRunning,
+				}
+				Expect(summary).To(Equal(expectedSummary))
+			})
+		})
 	})
 })
 
 func getExampleMonitSummary() []byte {
 	path := filepath.FromSlash("assets/example_monit_summary.txt")
+	return readFile(path)
+}
+
+func getExampleMonitSummaryOneStopped() []byte {
+	path := filepath.FromSlash("assets/example_monit_summary_one_stopped.txt")
 	return readFile(path)
 }

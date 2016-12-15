@@ -9,6 +9,7 @@ type OS interface {
 	Chmod(string, os.FileMode) error
 	Chown(string, int, int) error
 	OpenFile(string, int, os.FileMode) (*os.File, error)
+	Stat(string) (os.FileInfo, error)
 }
 
 //OSWrap is a wrapper around os that implements ios.OS
@@ -37,4 +38,9 @@ func (osw *OSWrap) Chown(name string, uid, gid int) error {
 //OpenFile is a wrapper around os.OpenFile()
 func (osw *OSWrap) OpenFile(name string, flag int, perm os.FileMode) (*os.File, error) {
 	return os.OpenFile(name, flag, perm)
+}
+
+//Stat is a wrapper around os.Stat()
+func (osw *OSWrap) Stat(name string) (os.FileInfo, error) {
+	return os.Stat(name)
 }

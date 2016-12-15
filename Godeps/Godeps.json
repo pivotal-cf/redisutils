@@ -8,11 +8,11 @@
 	"Deps": [
 		{
 			"ImportPath": "github.com/BooleanCat/igo/ios",
-			"Rev": "4c69c848694465d8befdc8cada8ad67c94502455"
+			"Rev": "7bd6d5c6db711409c6347cd42b2dc111cd400c5c"
 		},
 		{
 			"ImportPath": "github.com/BooleanCat/igo/ios/iexec",
-			"Rev": "4c69c848694465d8befdc8cada8ad67c94502455"
+			"Rev": "7bd6d5c6db711409c6347cd42b2dc111cd400c5c"
 		},
 		{
 			"ImportPath": "github.com/onsi/ginkgo",

@@ -143,6 +143,48 @@ var _ = Describe("monit", func() {
 			})
 		})
 	})
+
+	Describe("#Stop", func() {
+		var (
+			stopErr error
+			command string
+			args    []string
+		)
+
+		JustBeforeEach(func() {
+			stopErr = monit.Stop("foo")
+			Expect(pureFake.Exec.CommandCallCount()).To(Equal(1))
+			command, args = pureFake.Exec.CommandArgsForCall(0)
+		})
+
+		It("does not return an error", func() {
+			Expect(stopErr).NotTo(HaveOccurred())
+		})
+
+		It("prepares to execute the monit binary", func() {
+			Expect(command).To(Equal("monit"))
+		})
+
+		It("prepares to execute `monit stop foo`", func() {
+			Expect(args).To(Equal([]string{"stop", "foo"}))
+		})
+
+		It("runs `monit stop foo`", func() {
+			Expect(pureFake.Cmd.RunCallCount()).To(Equal(1))
+		})
+
+		Context("when run returns an error", func() {
+			runErr := errors.New("Run failed")
+
+			BeforeEach(func() {
+				pureFake.Cmd.RunReturns(runErr)
+			})
+
+			It("returns the error", func() {
+				Expect(stopErr).To(MatchError(runErr))
+			})
+		})
+	})
 })
 
 func getExampleMonitSummary() []byte {

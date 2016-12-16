@@ -15,7 +15,7 @@ var _ = Describe("monit", func() {
 		testMonit.MonitrcPath = "/home/vcap/monitrc"
 	})
 
-	Describe("GetSummary", func() {
+	Describe("#GetSummary", func() {
 		var (
 			summary       monit.Statuses
 			getSummaryErr error
@@ -36,6 +36,28 @@ var _ = Describe("monit", func() {
 				"baz": monit.StatusRunning,
 			}
 			Expect(summary).To(Equal(expectedSummary))
+		})
+	})
+
+	Describe("#Stop", func() {
+		var stopErr error
+
+		BeforeEach(func() {
+			stopErr = testMonit.Stop("baz")
+		})
+
+		AfterEach(func() {
+			Eventually(bazIsNotMonitored, "10s").Should(BeTrue())
+			monitStartBaz()
+			Eventually(bazIsRunning, "15s").Should(BeTrue())
+		})
+
+		It("stops baz", func() {
+			By("not returning and error")
+			Expect(stopErr).NotTo(HaveOccurred())
+
+			By("and stopping baz")
+			Eventually(bazIsNotMonitored, "10s").Should(BeTrue())
 		})
 	})
 })

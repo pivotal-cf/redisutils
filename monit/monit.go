@@ -55,6 +55,11 @@ func (monit *Monit) GetSummary() (Statuses, error) {
 	return monit.newProcessMap(processes), nil
 }
 
+func (monit *Monit) Stop(job string) error {
+	cmd := monit.getMonitCommand("stop", job)
+	return cmd.Run()
+}
+
 func (monit *Monit) getRawSummary() (string, error) {
 	cmd := monit.getMonitCommand("summary")
 

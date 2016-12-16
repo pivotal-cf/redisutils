@@ -5,7 +5,6 @@ import (
 	"os/exec"
 	"regexp"
 	"testing"
-	"time"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -22,23 +21,9 @@ var _ = BeforeSuite(func() {
 })
 
 func waitForMonitJobsToBeRunning() {
-	waitFor(fooIsRunning)
-	waitFor(barIsRunning)
-	waitFor(bazIsRunning)
-}
-
-func waitFor(isDone func() bool) {
-	interval := time.Millisecond * 200
-	timeout := time.Second * 15
-
-	for elapsed := time.Duration(0); elapsed < timeout; elapsed = elapsed + interval {
-		if isDone() {
-			return
-		}
-		time.Sleep(interval)
-	}
-
-	Fail("timed out")
+	Eventually(fooIsRunning, "15s").Should(BeTrue())
+	Eventually(barIsRunning, "15s").Should(BeTrue())
+	Eventually(bazIsRunning, "15s").Should(BeTrue())
 }
 
 func fooIsRunning() bool {
@@ -53,6 +38,16 @@ func bazIsRunning() bool {
 	return isRunning("baz")
 }
 
+func bazIsNotMonitored() bool {
+	return isNotMonitored("baz")
+}
+
+func isNotMonitored(job string) bool {
+	summary := getMonitSummary()
+	pattern := getJobNotMonitoredPattern(job)
+	return pattern.Match(summary)
+}
+
 func isRunning(job string) bool {
 	summary := getMonitSummary()
 	pattern := getJobRunningPattern(job)
@@ -64,8 +59,19 @@ func getJobRunningPattern(job string) *regexp.Regexp {
 	return regexp.MustCompile(pattern)
 }
 
+func getJobNotMonitoredPattern(job string) *regexp.Regexp {
+	pattern := fmt.Sprintf(`(?m)^Process '%s'\s+not monitored$`, job)
+	return regexp.MustCompile(pattern)
+}
+
 func startMonit() {
 	cmd := exec.Command("monit", "-c", "/home/vcap/monitrc")
+	err := cmd.Run()
+	Expect(err).NotTo(HaveOccurred())
+}
+
+func monitStartBaz() {
+	cmd := exec.Command("monit", "-c", "/home/vcap/monitrc", "start", "baz")
 	err := cmd.Run()
 	Expect(err).NotTo(HaveOccurred())
 }

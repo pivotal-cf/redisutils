@@ -2,7 +2,6 @@ package monit
 
 import (
 	"errors"
-	"path/filepath"
 	"strings"
 
 	"github.com/BooleanCat/igo/ios/iexec"
@@ -144,6 +143,42 @@ var _ = Describe("monit", func() {
 		})
 	})
 
+	Describe("#GetStatus", func() {
+		var (
+			status       Status
+			getStatusErr error
+		)
+
+		BeforeEach(func() {
+			exampleSummary := getExampleMonitSummaryAllStatuses()
+			pureFake.Cmd.CombinedOutputReturns(exampleSummary, nil)
+		})
+
+		JustBeforeEach(func() {
+			status, getStatusErr = monit.GetStatus("broker-nginx")
+		})
+
+		It("does not return an error", func() {
+			Expect(getStatusErr).NotTo(HaveOccurred())
+		})
+
+		It("gets the correct status", func() {
+			Expect(status).To(Equal(StatusDoesNotExist))
+		})
+
+		Context("when GetSummary returns an error", func() {
+			combinedOutputErr := errors.New("CombinedOutput failed")
+
+			BeforeEach(func() {
+				pureFake.Cmd.CombinedOutputReturns(nil, combinedOutputErr)
+			})
+
+			It("returns the error", func() {
+				Expect(getStatusErr).To(MatchError(combinedOutputErr))
+			})
+		})
+	})
+
 	Describe("#Stop", func() {
 		var (
 			stopErr error
@@ -186,18 +221,3 @@ var _ = Describe("monit", func() {
 		})
 	})
 })
-
-func getExampleMonitSummary() []byte {
-	path := filepath.FromSlash("assets/example_monit_summary.txt")
-	return readFile(path)
-}
-
-func getExampleMonitSummaryOneStopped() []byte {
-	path := filepath.FromSlash("assets/example_monit_summary_one_stopped.txt")
-	return readFile(path)
-}
-
-func getExampleMonitSummaryAllStatuses() []byte {
-	path := filepath.FromSlash("assets/example_monit_summary_all_statuses.txt")
-	return readFile(path)
-}

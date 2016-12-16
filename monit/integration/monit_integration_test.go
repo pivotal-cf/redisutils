@@ -39,6 +39,25 @@ var _ = Describe("monit", func() {
 		})
 	})
 
+	Describe("#GetStatus", func() {
+		var (
+			status       monit.Status
+			getStatusErr error
+		)
+
+		BeforeEach(func() {
+			status, getStatusErr = testMonit.GetStatus("baz")
+		})
+
+		It("does not return an error", func() {
+			Expect(getStatusErr).NotTo(HaveOccurred())
+		})
+
+		It("gets the correct status", func() {
+			Expect(status).To(Equal(monit.StatusRunning))
+		})
+	})
+
 	Describe("#Stop", func() {
 		var stopErr error
 

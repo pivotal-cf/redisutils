@@ -1,7 +1,7 @@
 The Monit daemon 5.2.5 uptime: 1h 6m
 
 Process 'process-watcher'           running
-Process 'process-destroyer'         stopped
+Process 'process-destroyer'         not monitored
 Process 'cf-redis-broker'           running
 Process 'broker-nginx'              running
 Process 'route_registrar'           running

@@ -12,12 +12,11 @@ type Statuses map[string]Status
 const (
 	StatusRunning Status = iota
 	StatusNotMonitored
-	StatusStopped
 )
 
 var statusMapping = Statuses{
-	"running": StatusRunning,
-	"stopped": StatusStopped,
+	"running":       StatusRunning,
+	"not monitored": StatusNotMonitored,
 }
 
 func getStatus(status string) Status {
@@ -60,7 +59,7 @@ func (monit *Monit) getRawSummary() (string, error) {
 }
 
 func (monit *Monit) getProcessesFromRawSummary(summary string) [][]string {
-	pattern := regexp.MustCompile(`(?m)^Process '([\w\-]+)'\s+(\w+)$`)
+	pattern := regexp.MustCompile(`(?m)^Process '([\w\-]+)'\s+([\w ]+)$`)
 	return pattern.FindAllStringSubmatch(summary, -1)
 }
 

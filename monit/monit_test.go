@@ -108,7 +108,7 @@ var _ = Describe("monit", func() {
 			It("reports the correct process as stopped", func() {
 				expectedSummary := Statuses{
 					"process-watcher":   StatusRunning,
-					"process-destroyer": StatusStopped,
+					"process-destroyer": StatusNotMonitored,
 					"cf-redis-broker":   StatusRunning,
 					"broker-nginx":      StatusRunning,
 					"route_registrar":   StatusRunning,

@@ -96,6 +96,14 @@ var _ = Describe("monit", func() {
 		})
 
 		Context("when one process is `stopped`", func() {
+			expectedSummary := Statuses{
+				"process-watcher":   StatusRunning,
+				"process-destroyer": StatusNotMonitored,
+				"cf-redis-broker":   StatusRunning,
+				"broker-nginx":      StatusRunning,
+				"route_registrar":   StatusRunning,
+			}
+
 			BeforeEach(func() {
 				exampleSummary = getExampleMonitSummaryOneStopped()
 				pureFake.Cmd.CombinedOutputReturns(exampleSummary, nil)
@@ -106,18 +114,21 @@ var _ = Describe("monit", func() {
 			})
 
 			It("reports the correct process as stopped", func() {
-				expectedSummary := Statuses{
-					"process-watcher":   StatusRunning,
-					"process-destroyer": StatusNotMonitored,
-					"cf-redis-broker":   StatusRunning,
-					"broker-nginx":      StatusRunning,
-					"route_registrar":   StatusRunning,
-				}
 				Expect(summary).To(Equal(expectedSummary))
 			})
 		})
 
 		Context("for all possible statuses", func() {
+			expectedSummary := Statuses{
+				"process-watcher":   StatusRunning,
+				"process-destroyer": StatusNotMonitored,
+				"cf-redis-broker":   StatusNotMonitoredStartPending,
+				"broker-nginx":      StatusDoesNotExist,
+				"route_registrar":   StatusInitializing,
+				"crazy-job":         StatusNotMonitoredStopPending,
+				"crazy-job-2":       StatusRunningRestartPending,
+			}
+
 			BeforeEach(func() {
 				exampleSummary = getExampleMonitSummaryAllStatuses()
 				pureFake.Cmd.CombinedOutputReturns(exampleSummary, nil)
@@ -128,15 +139,6 @@ var _ = Describe("monit", func() {
 			})
 
 			It("reports the correct status", func() {
-				expectedSummary := Statuses{
-					"process-watcher":   StatusRunning,
-					"process-destroyer": StatusNotMonitored,
-					"cf-redis-broker":   StatusNotMonitoredStartPending,
-					"broker-nginx":      StatusDoesNotExist,
-					"route_registrar":   StatusInitializing,
-					"crazy-job":         StatusNotMonitoredStopPending,
-					"crazy-job-2":       StatusRunningRestartPending,
-				}
 				Expect(summary).To(Equal(expectedSummary))
 			})
 		})

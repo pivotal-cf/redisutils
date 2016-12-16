@@ -12,11 +12,21 @@ type Statuses map[string]Status
 const (
 	StatusRunning Status = iota
 	StatusNotMonitored
+	StatusNotMonitoredStartPending
+	StatusInitializing
+	StatusDoesNotExist
+	StatusNotMonitoredStopPending
+	StatusRunningRestartPending
 )
 
 var statusMapping = Statuses{
-	"running":       StatusRunning,
-	"not monitored": StatusNotMonitored,
+	"running":                       StatusRunning,
+	"not monitored":                 StatusNotMonitored,
+	"not monitored - start pending": StatusNotMonitoredStartPending,
+	"initializing":                  StatusInitializing,
+	"Does not exist":                StatusDoesNotExist,
+	"not monitored - stop pending":  StatusNotMonitoredStopPending,
+	"running - restart pending":     StatusRunningRestartPending,
 }
 
 func getStatus(status string) Status {
@@ -42,9 +52,7 @@ func (monit *Monit) GetSummary() (Statuses, error) {
 	}
 
 	processes := monit.getProcessesFromRawSummary(rawSummary)
-	summaries := monit.newProcessMap(processes)
-
-	return summaries, nil
+	return monit.newProcessMap(processes), nil
 }
 
 func (monit *Monit) getRawSummary() (string, error) {
@@ -59,7 +67,7 @@ func (monit *Monit) getRawSummary() (string, error) {
 }
 
 func (monit *Monit) getProcessesFromRawSummary(summary string) [][]string {
-	pattern := regexp.MustCompile(`(?m)^Process '([\w\-]+)'\s+([\w ]+)$`)
+	pattern := regexp.MustCompile(`(?m)^Process '([\w\-]+)'\s+([\w \-]+)$`)
 	return pattern.FindAllStringSubmatch(summary, -1)
 }
 

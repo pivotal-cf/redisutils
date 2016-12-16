@@ -1,0 +1,9 @@
+The Monit daemon 5.2.5 uptime: 1h 6m
+
+Process 'process-watcher'           running
+Process 'process-destroyer'         not monitored
+Process 'cf-redis-broker'           not monitored - start pending
+Process 'broker-nginx'              Does not exist
+Process 'route_registrar'           initializing
+Process 'crazy-job'                 not monitored - stop pending
+Process 'crazy-job-2'               running - restart pending

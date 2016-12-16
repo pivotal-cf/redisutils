@@ -116,6 +116,30 @@ var _ = Describe("monit", func() {
 				Expect(summary).To(Equal(expectedSummary))
 			})
 		})
+
+		Context("for all possible statuses", func() {
+			BeforeEach(func() {
+				exampleSummary = getExampleMonitSummaryAllStatuses()
+				pureFake.Cmd.CombinedOutputReturns(exampleSummary, nil)
+			})
+
+			It("does not return an error", func() {
+				Expect(getSummaryErr).NotTo(HaveOccurred())
+			})
+
+			It("reports the correct status", func() {
+				expectedSummary := Statuses{
+					"process-watcher":   StatusRunning,
+					"process-destroyer": StatusNotMonitored,
+					"cf-redis-broker":   StatusNotMonitoredStartPending,
+					"broker-nginx":      StatusDoesNotExist,
+					"route_registrar":   StatusInitializing,
+					"crazy-job":         StatusNotMonitoredStopPending,
+					"crazy-job-2":       StatusRunningRestartPending,
+				}
+				Expect(summary).To(Equal(expectedSummary))
+			})
+		})
 	})
 })
 
@@ -126,5 +150,10 @@ func getExampleMonitSummary() []byte {
 
 func getExampleMonitSummaryOneStopped() []byte {
 	path := filepath.FromSlash("assets/example_monit_summary_one_stopped.txt")
+	return readFile(path)
+}
+
+func getExampleMonitSummaryAllStatuses() []byte {
+	path := filepath.FromSlash("assets/example_monit_summary_all_statuses.txt")
 	return readFile(path)
 }

@@ -63,6 +63,11 @@ func (monit *Monit) GetStatus(job string) (Status, error) {
 	return summary[job], nil
 }
 
+func (monit *Monit) Start(job string) error {
+	cmd := monit.getMonitCommand("start", job)
+	return cmd.Run()
+}
+
 func (monit *Monit) Stop(job string) error {
 	cmd := monit.getMonitCommand("stop", job)
 	return cmd.Run()

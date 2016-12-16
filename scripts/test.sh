@@ -30,7 +30,7 @@ if [ "$LOCAL" = true ]; then
   exit $?
 fi
 
-GINKGO_ARGS=${GINKGO_ARGS:-". -r --race --slowSpecThreshold=10"}
+GINKGO_ARGS=${GINKGO_ARGS:-". -r --race --slowSpecThreshold=15"}
 
 echo "Building docker image..."
 $DIR/docker-build.sh > /dev/null

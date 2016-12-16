@@ -97,4 +97,16 @@ var _ = Describe("monit", func() {
 			Eventually(bazIsNotMonitored, "15s").Should(BeTrue())
 		})
 	})
+
+	It("can stop and start all processes", func() {
+		By("stopping all processes")
+		err := testMonit.Stop("all")
+		Expect(err).NotTo(HaveOccurred())
+		Eventually(allAreNotMonitored, "15s").Should(BeTrue())
+
+		By("starting all processes")
+		err = testMonit.Start("all")
+		Expect(err).NotTo(HaveOccurred())
+		Eventually(allAreRunning, "15s").Should(BeTrue())
+	})
 })

@@ -38,8 +38,28 @@ func bazIsRunning() bool {
 	return isRunning("baz")
 }
 
+func allAreRunning() bool {
+	return fooIsRunning() &&
+		barIsRunning() &&
+		bazIsRunning()
+}
+
+func fooIsNotMonitored() bool {
+	return isNotMonitored("baz")
+}
+
+func barIsNotMonitored() bool {
+	return isNotMonitored("baz")
+}
+
 func bazIsNotMonitored() bool {
 	return isNotMonitored("baz")
+}
+
+func allAreNotMonitored() bool {
+	return fooIsNotMonitored() &&
+		barIsNotMonitored() &&
+		bazIsNotMonitored()
 }
 
 func isNotMonitored(job string) bool {

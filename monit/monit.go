@@ -2,6 +2,7 @@ package monit
 
 import (
 	"regexp"
+	"time"
 
 	"github.com/BooleanCat/igo/ios/iexec"
 )
@@ -10,7 +11,8 @@ type Status int
 type Statuses map[string]Status
 
 const (
-	StatusRunning Status = iota
+	StatusNull Status = iota
+	StatusRunning
 	StatusNotMonitored
 	StatusNotMonitoredStartPending
 	StatusInitializing
@@ -36,12 +38,14 @@ func getStatus(status string) Status {
 type Monit struct {
 	MonitrcPath string
 
-	exec iexec.Exec
+	timeout time.Duration
+	exec    iexec.Exec
 }
 
 func New() *Monit {
 	return &Monit{
-		exec: new(iexec.ExecWrap),
+		timeout: time.Second * 15,
+		exec:    new(iexec.ExecWrap),
 	}
 }
 
@@ -71,6 +75,43 @@ func (monit *Monit) Start(job string) error {
 func (monit *Monit) Stop(job string) error {
 	cmd := monit.getMonitCommand("stop", job)
 	return cmd.Run()
+}
+
+func (monit *Monit) StartAndWait(job string) error {
+	err := monit.Start(job)
+	if err != nil {
+		return err
+	}
+
+	return monit.waitFor(job, StatusRunning)
+}
+
+func (monit *Monit) StopAndWait(job string) error {
+	err := monit.Stop(job)
+	if err != nil {
+		return err
+	}
+
+	return monit.waitFor(job, StatusNotMonitored)
+}
+
+func (monit *Monit) waitFor(job string, status Status) error {
+	interval := time.Millisecond * 100
+
+	for elapsed := time.Duration(0); elapsed < monit.timeout; elapsed = elapsed + interval {
+		currentStatus, err := monit.GetStatus(job)
+		if err != nil {
+			return err
+		}
+
+		if status == currentStatus {
+			return nil
+		}
+
+		time.Sleep(interval)
+	}
+
+	return nil
 }
 
 func (monit *Monit) getRawSummary() (string, error) {

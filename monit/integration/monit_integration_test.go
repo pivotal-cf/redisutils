@@ -76,6 +76,24 @@ var _ = Describe("monit", func() {
 		})
 	})
 
+	Describe("#StartAndWait", func() {
+		var startAndWaitErr error
+
+		BeforeEach(func() {
+			monitStopBaz()
+			Eventually(bazIsNotMonitored, "15s").Should(BeTrue())
+			startAndWaitErr = testMonit.StartAndWait("baz")
+		})
+
+		It("starts baz", func() {
+			By("not returning an error")
+			Expect(startAndWaitErr).NotTo(HaveOccurred())
+
+			By("and starting baz")
+			Expect(bazIsRunning()).To(BeTrue())
+		})
+	})
+
 	Describe("#Stop", func() {
 		var stopErr error
 
@@ -95,6 +113,28 @@ var _ = Describe("monit", func() {
 
 			By("and stopping baz")
 			Eventually(bazIsNotMonitored, "15s").Should(BeTrue())
+		})
+	})
+
+	Describe("#StopAndWait", func() {
+		var stopAndWaitErr error
+
+		BeforeEach(func() {
+			stopAndWaitErr = testMonit.StopAndWait("baz")
+		})
+
+		AfterEach(func() {
+			Eventually(bazIsNotMonitored, "15s").Should(BeTrue())
+			monitStartBaz()
+			Eventually(bazIsRunning, "15s").Should(BeTrue())
+		})
+
+		It("stops baz", func() {
+			By("not returning and error")
+			Expect(stopAndWaitErr).NotTo(HaveOccurred())
+
+			By("and stopping baz")
+			Expect(bazIsNotMonitored()).To(BeTrue())
 		})
 	})
 

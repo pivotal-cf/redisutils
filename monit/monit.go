@@ -7,17 +7,34 @@ import (
 	"github.com/BooleanCat/igo/ios/iexec"
 )
 
+//Status is an enumeration of monit statuses
 type Status int
+
+//Statuses is a mapping of monit statuses to Status
 type Statuses map[string]Status
 
 const (
-	StatusNull Status = iota
+	_ Status = iota
+
+	//StatusRunning indicates `Process 'foo' running`
 	StatusRunning
+
+	//StatusNotMonitored indicates `Process 'foo' not monitored`
 	StatusNotMonitored
+
+	//StatusNotMonitoredStartPending indicates `Process 'foo' not monitored - start pending`
 	StatusNotMonitoredStartPending
+
+	//StatusInitializing indicates `Process 'foo' initializing`
 	StatusInitializing
+
+	//StatusDoesNotExist indicates `Process 'foo' Does not exist`
 	StatusDoesNotExist
+
+	//StatusNotMonitoredStopPending indicates `Process 'foo' not monitored - stop pending`
 	StatusNotMonitoredStopPending
+
+	//StatusRunningRestartPending indicates `Process 'foo' running - restart pending`
 	StatusRunningRestartPending
 )
 
@@ -35,6 +52,7 @@ func getStatus(status string) Status {
 	return statusMapping[status]
 }
 
+//Monit is a controller for the monit CLI
 type Monit struct {
 	MonitrcPath string
 
@@ -42,6 +60,7 @@ type Monit struct {
 	exec    iexec.Exec
 }
 
+//New is the correct way to initialise a new Monit
 func New() *Monit {
 	return &Monit{
 		timeout: time.Second * 15,
@@ -49,6 +68,7 @@ func New() *Monit {
 	}
 }
 
+//GetSummary is synonymous with `monit summary`
 func (monit *Monit) GetSummary() (Statuses, error) {
 	rawSummary, err := monit.getRawSummary()
 	if err != nil {
@@ -59,6 +79,7 @@ func (monit *Monit) GetSummary() (Statuses, error) {
 	return monit.newProcessMap(processes), nil
 }
 
+//GetStatus a job specific Status from GetSummary
 func (monit *Monit) GetStatus(job string) (Status, error) {
 	summary, err := monit.GetSummary()
 	if err != nil {
@@ -67,16 +88,19 @@ func (monit *Monit) GetStatus(job string) (Status, error) {
 	return summary[job], nil
 }
 
+//Start is synonymous with `monit start {job}`
 func (monit *Monit) Start(job string) error {
 	cmd := monit.getMonitCommand("start", job)
 	return cmd.Run()
 }
 
+//Stop is synonymous with `monit stop {job}`
 func (monit *Monit) Stop(job string) error {
 	cmd := monit.getMonitCommand("stop", job)
 	return cmd.Run()
 }
 
+//StartAndWait runs Start(job) and waits for GetStatus(job) to report StatusRunning
 func (monit *Monit) StartAndWait(job string) error {
 	err := monit.Start(job)
 	if err != nil {
@@ -86,6 +110,7 @@ func (monit *Monit) StartAndWait(job string) error {
 	return monit.waitFor(job, StatusRunning)
 }
 
+//StopAndWait runs Stop(job) and waits for GetStatus(job) to report StatusNotMonitored
 func (monit *Monit) StopAndWait(job string) error {
 	err := monit.Stop(job)
 	if err != nil {

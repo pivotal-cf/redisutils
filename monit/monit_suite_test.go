@@ -3,6 +3,7 @@ package monit
 import (
 	"io/ioutil"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	. "github.com/onsi/ginkgo"
@@ -33,4 +34,23 @@ func getExampleMonitSummaryOneStopped() []byte {
 func getExampleMonitSummaryAllStatuses() []byte {
 	path := filepath.FromSlash("assets/example_monit_summary_all_statuses.txt")
 	return readFile(path)
+}
+
+func joinCommand(command string, args []string) string {
+	joined := []string{command}
+	return strings.Join(append(joined, args...), " ")
+}
+
+func combinedOutputReturns(returns [][]byte) *combinedOutput {
+	return &combinedOutput{returnIndex: -1, returns: returns}
+}
+
+type combinedOutput struct {
+	returns     [][]byte
+	returnIndex int
+}
+
+func (c *combinedOutput) sequentially() ([]byte, error) {
+	c.returnIndex++
+	return c.returns[c.returnIndex], nil
 }

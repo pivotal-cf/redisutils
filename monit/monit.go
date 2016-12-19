@@ -1,11 +1,15 @@
 package monit
 
 import (
+	"errors"
 	"regexp"
 	"time"
 
 	"github.com/BooleanCat/igo/ios/iexec"
 )
+
+//ErrTimeout indicates that some monit action took too long
+var ErrTimeout = errors.New("timed out waiting for monit operation")
 
 //Status is an enumeration of monit statuses
 type Status int
@@ -56,15 +60,17 @@ func getStatus(status string) Status {
 type Monit struct {
 	MonitrcPath string
 
-	timeout time.Duration
-	exec    iexec.Exec
+	interval time.Duration
+	timeout  time.Duration
+	exec     iexec.Exec
 }
 
 //New is the correct way to initialise a new Monit
 func New() *Monit {
 	return &Monit{
-		timeout: time.Second * 15,
-		exec:    new(iexec.ExecWrap),
+		interval: time.Millisecond * 100,
+		timeout:  time.Second * 15,
+		exec:     new(iexec.ExecWrap),
 	}
 }
 
@@ -121,9 +127,7 @@ func (monit *Monit) StopAndWait(job string) error {
 }
 
 func (monit *Monit) waitFor(job string, status Status) error {
-	interval := time.Millisecond * 100
-
-	for elapsed := time.Duration(0); elapsed < monit.timeout; elapsed = elapsed + interval {
+	for elapsed := time.Duration(0); elapsed < monit.timeout; elapsed = elapsed + monit.interval {
 		currentStatus, err := monit.GetStatus(job)
 		if err != nil {
 			return err
@@ -133,10 +137,10 @@ func (monit *Monit) waitFor(job string, status Status) error {
 			return nil
 		}
 
-		time.Sleep(interval)
+		time.Sleep(monit.interval)
 	}
 
-	return nil
+	return ErrTimeout
 }
 
 func (monit *Monit) getRawSummary() (string, error) {

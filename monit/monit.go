@@ -57,7 +57,18 @@ func getStatus(status string) Status {
 }
 
 //Monit is a controller for the monit CLI
-type Monit struct {
+type Monit interface {
+	GetSummary() (Statuses, error)
+	GetStatus(string) (Status, error)
+	Start(string) error
+	Stop(string) error
+	StartAndWait(string) error
+	StopAndWait(string) error
+	SetMonitrcPath(string)
+}
+
+//SysMonit is a controller for the monit CLI
+type SysMonit struct {
 	MonitrcPath string
 
 	interval time.Duration
@@ -66,16 +77,21 @@ type Monit struct {
 }
 
 //New is the correct way to initialise a new Monit
-func New() *Monit {
-	return &Monit{
+func New() *SysMonit {
+	return &SysMonit{
 		interval: time.Millisecond * 100,
 		timeout:  time.Second * 15,
 		exec:     new(iexec.ExecWrap),
 	}
 }
 
+//SetMonitrcPath updates monit's target monitrc when making CLI calls
+func (monit *SysMonit) SetMonitrcPath(path string) {
+	monit.MonitrcPath = path
+}
+
 //GetSummary is synonymous with `monit summary`
-func (monit *Monit) GetSummary() (Statuses, error) {
+func (monit *SysMonit) GetSummary() (Statuses, error) {
 	rawSummary, err := monit.getRawSummary()
 	if err != nil {
 		return nil, err
@@ -86,7 +102,7 @@ func (monit *Monit) GetSummary() (Statuses, error) {
 }
 
 //GetStatus a job specific Status from GetSummary
-func (monit *Monit) GetStatus(job string) (Status, error) {
+func (monit *SysMonit) GetStatus(job string) (Status, error) {
 	summary, err := monit.GetSummary()
 	if err != nil {
 		return 0, err
@@ -95,19 +111,19 @@ func (monit *Monit) GetStatus(job string) (Status, error) {
 }
 
 //Start is synonymous with `monit start {job}`
-func (monit *Monit) Start(job string) error {
+func (monit *SysMonit) Start(job string) error {
 	cmd := monit.getMonitCommand("start", job)
 	return cmd.Run()
 }
 
 //Stop is synonymous with `monit stop {job}`
-func (monit *Monit) Stop(job string) error {
+func (monit *SysMonit) Stop(job string) error {
 	cmd := monit.getMonitCommand("stop", job)
 	return cmd.Run()
 }
 
 //StartAndWait runs Start(job) and waits for GetStatus(job) to report StatusRunning
-func (monit *Monit) StartAndWait(job string) error {
+func (monit *SysMonit) StartAndWait(job string) error {
 	err := monit.Start(job)
 	if err != nil {
 		return err
@@ -117,7 +133,7 @@ func (monit *Monit) StartAndWait(job string) error {
 }
 
 //StopAndWait runs Stop(job) and waits for GetStatus(job) to report StatusNotMonitored
-func (monit *Monit) StopAndWait(job string) error {
+func (monit *SysMonit) StopAndWait(job string) error {
 	err := monit.Stop(job)
 	if err != nil {
 		return err
@@ -126,7 +142,7 @@ func (monit *Monit) StopAndWait(job string) error {
 	return monit.waitFor(job, StatusNotMonitored)
 }
 
-func (monit *Monit) waitFor(job string, status Status) error {
+func (monit *SysMonit) waitFor(job string, status Status) error {
 	for elapsed := time.Duration(0); elapsed < monit.timeout; elapsed = elapsed + monit.interval {
 		currentStatus, err := monit.GetStatus(job)
 		if err != nil {
@@ -143,7 +159,7 @@ func (monit *Monit) waitFor(job string, status Status) error {
 	return ErrTimeout
 }
 
-func (monit *Monit) getRawSummary() (string, error) {
+func (monit *SysMonit) getRawSummary() (string, error) {
 	cmd := monit.getMonitCommand("summary")
 
 	rawSummary, err := cmd.CombinedOutput()
@@ -154,12 +170,12 @@ func (monit *Monit) getRawSummary() (string, error) {
 	return string(rawSummary), nil
 }
 
-func (monit *Monit) getProcessesFromRawSummary(summary string) [][]string {
+func (monit *SysMonit) getProcessesFromRawSummary(summary string) [][]string {
 	pattern := regexp.MustCompile(`(?m)^Process '([\w\-]+)'\s+([\w \-]+)$`)
 	return pattern.FindAllStringSubmatch(summary, -1)
 }
 
-func (monit *Monit) newProcessMap(processes [][]string) Statuses {
+func (monit *SysMonit) newProcessMap(processes [][]string) Statuses {
 	processMap := make(Statuses)
 	for _, process := range processes {
 		processMap[process[1]] = getStatus(process[2])
@@ -168,7 +184,7 @@ func (monit *Monit) newProcessMap(processes [][]string) Statuses {
 	return processMap
 }
 
-func (monit *Monit) getMonitCommand(args ...string) iexec.Cmd {
+func (monit *SysMonit) getMonitCommand(args ...string) iexec.Cmd {
 	var allArgs []string
 
 	if monit.MonitrcPath != "" {

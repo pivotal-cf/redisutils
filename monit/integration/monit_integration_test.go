@@ -8,11 +8,11 @@ import (
 )
 
 var _ = Describe("monit", func() {
-	var testMonit *monit.Monit
+	var testMonit monit.Monit
 
 	BeforeEach(func() {
 		testMonit = monit.New()
-		testMonit.MonitrcPath = "/home/vcap/monitrc"
+		testMonit.SetMonitrcPath("/home/vcap/monitrc")
 	})
 
 	Describe("#GetSummary", func() {

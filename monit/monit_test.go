@@ -11,7 +11,7 @@ import (
 )
 
 var _ = Describe("monit", func() {
-	var monit *Monit
+	var monit *SysMonit
 	var pureFake *iexec.PureFake
 
 	BeforeEach(func() {
@@ -343,6 +343,13 @@ var _ = Describe("monit", func() {
 			It("returns an error", func() {
 				Expect(stopAndWaitErr).To(MatchError(ErrTimeout))
 			})
+		})
+	})
+
+	Describe("#SetMonitrcPath", func() {
+		It("sets correctly", func() {
+			monit.SetMonitrcPath("/foo/bar")
+			Expect(monit.MonitrcPath).To(Equal("/foo/bar"))
 		})
 	})
 })

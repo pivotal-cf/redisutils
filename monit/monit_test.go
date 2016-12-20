@@ -264,6 +264,88 @@ var _ = Describe("monit", func() {
 		})
 	})
 
+	Describe("#StartAndWait", func() {
+		var startAndWaitErr error
+
+		BeforeEach(func() {
+			output := []byte("Process 'foo' running")
+			pureFake.Cmd.CombinedOutputReturns(output, nil)
+		})
+
+		JustBeforeEach(func() {
+			startAndWaitErr = monit.StartAndWait("foo")
+		})
+
+		It("does not return an error", func() {
+			Expect(startAndWaitErr).NotTo(HaveOccurred())
+		})
+
+		It("calls `monit stop {job}`", func() {
+			command := joinCommand(pureFake.Exec.CommandArgsForCall(0))
+			Expect(command).To(Equal("monit start foo"))
+		})
+
+		It("calls `monit summary`", func() {
+			command := joinCommand(pureFake.Exec.CommandArgsForCall(1))
+			Expect(command).To(Equal("monit summary"))
+		})
+
+		Context("When GetStatus returns StatusRunning some time later", func() {
+			BeforeEach(func() {
+				pureFake.Cmd.CombinedOutputStub = combinedOutputReturns([][]byte{
+					[]byte("Process 'foo' not monitored"),
+					[]byte("Process 'foo' not monitored"),
+					[]byte("Process 'foo' running"),
+				}).sequentially
+
+				monit.interval = time.Duration(0)
+			})
+
+			It("does not return an error", func() {
+				Expect(startAndWaitErr).NotTo(HaveOccurred())
+			})
+
+			It("calls `monit summary` multiple times", func() {
+				Expect(pureFake.Cmd.CombinedOutputCallCount()).To(Equal(3))
+			})
+		})
+
+		Context("when Start returns an error", func() {
+			startErr := errors.New("Start failed")
+
+			BeforeEach(func() {
+				pureFake.Cmd.RunReturns(startErr)
+			})
+
+			It("returns the error", func() {
+				Expect(startAndWaitErr).To(MatchError(startErr))
+			})
+		})
+
+		Context("when GetStatus returns an error", func() {
+			getStatusErr := errors.New("GetStatus failed")
+
+			BeforeEach(func() {
+				pureFake.Cmd.CombinedOutputReturns(nil, getStatusErr)
+			})
+
+			It("returns the error", func() {
+				Expect(startAndWaitErr).To(MatchError(getStatusErr))
+			})
+		})
+
+		Context("when waiting times out", func() {
+			BeforeEach(func() {
+				monit.timeout = time.Duration(0)
+				pureFake.Cmd.CombinedOutputReturns(nil, nil)
+			})
+
+			It("returns an error", func() {
+				Expect(startAndWaitErr).To(MatchError(ErrTimeout))
+			})
+		})
+	})
+
 	Describe("#StopAndWait", func() {
 		var stopAndWaitErr error
 
@@ -322,7 +404,7 @@ var _ = Describe("monit", func() {
 			})
 		})
 
-		Context("when #GetStatus returns an error", func() {
+		Context("when GetStatus returns an error", func() {
 			getStatusErr := errors.New("GetStatus failed")
 
 			BeforeEach(func() {

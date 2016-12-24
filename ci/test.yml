@@ -1,0 +1,8 @@
+---
+platform: linux
+image: docker:///cflondonservices/redisutils
+inputs:
+- name: redisutils
+  path: src/github.com/pivotal-cf/redisutils
+run:
+  path: src/github.com/pivotal-cf/redisutils/ci/test.sh

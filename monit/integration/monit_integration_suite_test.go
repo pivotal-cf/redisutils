@@ -17,14 +17,8 @@ func TestMonitIntegration(t *testing.T) {
 
 var _ = BeforeSuite(func() {
 	startMonit()
-	waitForMonitJobsToBeRunning()
+	Eventually(allAreRunning, "15s").Should(BeTrue())
 })
-
-func waitForMonitJobsToBeRunning() {
-	Eventually(fooIsRunning, "15s").Should(BeTrue())
-	Eventually(barIsRunning, "15s").Should(BeTrue())
-	Eventually(bazIsRunning, "15s").Should(BeTrue())
-}
 
 func fooIsRunning() bool {
 	return isRunning("foo")

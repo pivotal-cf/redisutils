@@ -5,3 +5,4 @@ inputs:
 - name: redisutils
 run:
   path: redisutils/ci/test.sh
+  user: vcap

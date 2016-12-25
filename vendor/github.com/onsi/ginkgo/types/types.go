@@ -1,6 +1,7 @@
 package types
 
 import (
+	"strconv"
 	"time"
 )
 
@@ -18,7 +19,10 @@ type SuiteSummary struct {
 	NumberOfSkippedSpecs               int
 	NumberOfPassedSpecs                int
 	NumberOfFailedSpecs                int
-	RunTime                            time.Duration
+	// Flaked specs are those that failed initially, but then passed on a
+	// subsequent try.
+	NumberOfFlakedSpecs int
+	RunTime             time.Duration
 }
 
 type SpecSummary struct {
@@ -37,7 +41,7 @@ type SpecSummary struct {
 }
 
 func (s SpecSummary) HasFailureState() bool {
-	return s.State == SpecStateTimedOut || s.State == SpecStatePanicked || s.State == SpecStateFailed
+	return s.State.IsFailure()
 }
 
 func (s SpecSummary) TimedOut() bool {
@@ -79,7 +83,7 @@ type SetupSummary struct {
 type SpecFailure struct {
 	Message        string
 	Location       CodeLocation
-	ForwardedPanic interface{}
+	ForwardedPanic string
 
 	ComponentIndex        int
 	ComponentType         SpecComponentType
@@ -102,6 +106,17 @@ type SpecMeasurement struct {
 	LargestLabel  string
 	AverageLabel  string
 	Units         string
+	Precision     int
+}
+
+func (s SpecMeasurement) PrecisionFmt() string {
+	if s.Precision == 0 {
+		return "%f"
+	}
+
+	str := strconv.Itoa(s.Precision)
+
+	return "%." + str + "f"
 }
 
 type SpecState uint
@@ -116,6 +131,10 @@ const (
 	SpecStatePanicked
 	SpecStateTimedOut
 )
+
+func (state SpecState) IsFailure() bool {
+	return state == SpecStateTimedOut || state == SpecStatePanicked || state == SpecStateFailed
+}
 
 type SpecComponentType uint
 

@@ -26,7 +26,9 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [ "$LOCAL" = true ]; then
-  ginkgo ${GINKGO_ARGS}
+  UNIT_TESTS="monit/"
+  GINKGO_ARGS=${GINKGO_ARGS:-"--race ${UNIT_TESTS}"}
+  ginkgo $GINKGO_ARGS
   exit $?
 fi
 

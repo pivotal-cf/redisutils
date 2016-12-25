@@ -108,7 +108,7 @@ var _ = Describe("monit", func() {
 		})
 
 		It("stops baz", func() {
-			By("not returning and error")
+			By("not returning an error")
 			Expect(stopErr).NotTo(HaveOccurred())
 
 			By("and stopping baz")
@@ -130,7 +130,7 @@ var _ = Describe("monit", func() {
 		})
 
 		It("stops baz", func() {
-			By("not returning and error")
+			By("not returning an error")
 			Expect(stopAndWaitErr).NotTo(HaveOccurred())
 
 			By("and stopping baz")

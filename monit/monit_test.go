@@ -11,8 +11,10 @@ import (
 )
 
 var _ = Describe("monit", func() {
-	var monit *SysMonit
-	var pureFake *iexec.PureFake
+	var (
+		monit    *SysMonit
+		pureFake *iexec.PureFake
+	)
 
 	BeforeEach(func() {
 		monit = New()

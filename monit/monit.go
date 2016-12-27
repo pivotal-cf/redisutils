@@ -144,19 +144,44 @@ func (monit *SysMonit) StopAndWait(job string) error {
 
 func (monit *SysMonit) waitFor(job string, status Status) error {
 	for elapsed := time.Duration(0); elapsed < monit.timeout; elapsed = elapsed + monit.interval {
-		currentStatus, err := monit.GetStatus(job)
-		if err != nil {
-			return err
-		}
+		done, doneErr := monit.jobHasStatus(job, status)
 
-		if status == currentStatus {
-			return nil
+		if doneErr != nil || done {
+			return doneErr
 		}
 
 		time.Sleep(monit.interval)
 	}
 
 	return ErrTimeout
+}
+
+func (monit *SysMonit) jobHasStatus(job string, status Status) (bool, error) {
+	if job == "all" {
+		return monit.allJobsHaveStatus(status)
+	}
+
+	currentStatus, err := monit.GetStatus(job)
+	if err != nil || status == currentStatus {
+		return status == currentStatus, err
+	}
+
+	return false, nil
+}
+
+func (monit *SysMonit) allJobsHaveStatus(status Status) (bool, error) {
+	summary, err := monit.GetSummary()
+	if err != nil {
+		return false, err
+	}
+
+	for _, jobStatus := range summary {
+		if jobStatus != status {
+			return false, nil
+		}
+	}
+
+	return true, nil
 }
 
 func (monit *SysMonit) getRawSummary() (string, error) {

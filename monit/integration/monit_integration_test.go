@@ -117,16 +117,22 @@ var _ = Describe("monit", func() {
 	})
 
 	Describe("#StopAndWait", func() {
-		var stopAndWaitErr error
+		var (
+			stopAndWaitErr error
+			process        string
+		)
 
 		BeforeEach(func() {
-			stopAndWaitErr = testMonit.StopAndWait("baz")
+			process = "baz"
+		})
+
+		JustBeforeEach(func() {
+			stopAndWaitErr = testMonit.StopAndWait(process)
 		})
 
 		AfterEach(func() {
-			Eventually(bazIsNotMonitored, "15s").Should(BeTrue())
-			monitStartBaz()
-			Eventually(bazIsRunning, "15s").Should(BeTrue())
+			monitStartAll()
+			Eventually(allAreRunning, "15s").Should(BeTrue())
 		})
 
 		It("stops baz", func() {
@@ -135,6 +141,20 @@ var _ = Describe("monit", func() {
 
 			By("and stopping baz")
 			Expect(bazIsNotMonitored()).To(BeTrue())
+		})
+
+		Context("when waiting on `monit stop all`", func() {
+			BeforeEach(func() {
+				process = "all"
+			})
+
+			It("stops all", func() {
+				By("not returning an error")
+				Expect(stopAndWaitErr).NotTo(HaveOccurred())
+
+				By("stopping all")
+				Expect(allAreNotMonitored()).To(BeTrue())
+			})
 		})
 	})
 

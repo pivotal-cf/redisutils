@@ -90,6 +90,12 @@ func monitStartBaz() {
 	Expect(err).NotTo(HaveOccurred())
 }
 
+func monitStartAll() {
+	cmd := exec.Command("monit", "-c", "/home/vcap/monitrc", "start", "all")
+	err := cmd.Run()
+	Expect(err).NotTo(HaveOccurred())
+}
+
 func monitStopBaz() {
 	cmd := exec.Command("monit", "-c", "/home/vcap/monitrc", "stop", "baz")
 	err := cmd.Run()

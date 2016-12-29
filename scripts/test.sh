@@ -3,8 +3,6 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ROOT=$( dirname $DIR )
 
-PACKAGE_DIR=/root/go/src/github.com/pivotal-cf/redisutils
-
 while [[ $# -gt 0 ]]; do
   case $1 in
       --local)

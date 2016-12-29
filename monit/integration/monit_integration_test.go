@@ -62,7 +62,7 @@ var _ = Describe("monit", func() {
 		var startErr error
 
 		BeforeEach(func() {
-			monitStopBaz()
+			monitStop("baz")
 			Eventually(bazIsNotMonitored, "15s").Should(BeTrue())
 			startErr = testMonit.Start("baz")
 		})
@@ -84,7 +84,7 @@ var _ = Describe("monit", func() {
 
 		BeforeEach(func() {
 			process = "baz"
-			monitStopBaz()
+			monitStop(process)
 			Eventually(bazIsNotMonitored, "15s").Should(BeTrue())
 		})
 
@@ -103,7 +103,7 @@ var _ = Describe("monit", func() {
 		Context("when waiting on `monit stop all`", func() {
 			BeforeEach(func() {
 				process = "all"
-				monitStopAll()
+				monitStop("all")
 				Eventually(allAreNotMonitored, "15s").Should(BeTrue())
 			})
 
@@ -126,7 +126,7 @@ var _ = Describe("monit", func() {
 
 		AfterEach(func() {
 			Eventually(bazIsNotMonitored, "15s").Should(BeTrue())
-			monitStartBaz()
+			monitStart("baz")
 			Eventually(bazIsRunning, "15s").Should(BeTrue())
 		})
 
@@ -154,7 +154,7 @@ var _ = Describe("monit", func() {
 		})
 
 		AfterEach(func() {
-			monitStartAll()
+			monitStart("all")
 			Eventually(allAreRunning, "15s").Should(BeTrue())
 		})
 

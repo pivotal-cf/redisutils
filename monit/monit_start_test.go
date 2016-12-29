@@ -64,15 +64,19 @@ var _ = Describe("monit", func() {
 	})
 
 	Describe("#StartAndWait", func() {
-		var startAndWaitErr error
+		var (
+			startAndWaitErr error
+			process         string
+		)
 
 		BeforeEach(func() {
+			process = "foo"
 			output := []byte("Process 'foo' running")
 			pureFake.Cmd.CombinedOutputReturns(output, nil)
 		})
 
 		JustBeforeEach(func() {
-			startAndWaitErr = monit.StartAndWait("foo")
+			startAndWaitErr = monit.StartAndWait(process)
 		})
 
 		It("does not return an error", func() {
@@ -106,6 +110,59 @@ var _ = Describe("monit", func() {
 
 			It("calls `monit summary` multiple times", func() {
 				Expect(pureFake.Cmd.CombinedOutputCallCount()).To(Equal(3))
+			})
+		})
+
+		Context("when starting all", func() {
+			BeforeEach(func() {
+				process = "all"
+			})
+
+			It("does not return an error", func() {
+				Expect(startAndWaitErr).NotTo(HaveOccurred())
+			})
+
+			It("calls `monit start all`", func() {
+				command := joinCommand(pureFake.Exec.CommandArgsForCall(0))
+				Expect(command).To(Equal("monit start all"))
+			})
+
+			It("calls `monit summary`", func() {
+				command := joinCommand(pureFake.Exec.CommandArgsForCall(1))
+				Expect(command).To(Equal("monit summary"))
+			})
+
+			Context("when GetSummary returns an error", func() {
+				getSummaryError := errors.New("GetSummary failed")
+
+				BeforeEach(func() {
+					pureFake.Cmd.CombinedOutputReturns(nil, getSummaryError)
+				})
+
+				It("returns the error", func() {
+					Expect(startAndWaitErr).To(MatchError(getSummaryError))
+				})
+			})
+
+			Context("when GetSummary reports all not monitored some time later", func() {
+				summaries := [][]byte{
+					[]byte("Process 'foo' not monitored\nProcess 'bar' not monitored"),
+					[]byte("Process 'foo' not monitored\nProcess 'bar' running"),
+					[]byte("Process 'foo' running\nProcess 'bar' running"),
+				}
+
+				BeforeEach(func() {
+					pureFake.Cmd.CombinedOutputStub = combinedOutputReturns(summaries).sequentially
+					monit.interval = time.Duration(0)
+				})
+
+				It("does not return an error", func() {
+					Expect(startAndWaitErr).NotTo(HaveOccurred())
+				})
+
+				It("calls `monit summary` multiple times", func() {
+					Expect(pureFake.Cmd.CombinedOutputCallCount()).To(Equal(3))
+				})
 			})
 		})
 

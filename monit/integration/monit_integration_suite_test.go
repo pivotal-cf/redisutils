@@ -102,6 +102,12 @@ func monitStopBaz() {
 	Expect(err).NotTo(HaveOccurred())
 }
 
+func monitStopAll() {
+	cmd := exec.Command("monit", "-c", "/home/vcap/monitrc", "stop", "all")
+	err := cmd.Run()
+	Expect(err).NotTo(HaveOccurred())
+}
+
 func getMonitSummary() []byte {
 	cmd := exec.Command("monit", "-c", "/home/vcap/monitrc", "summary")
 	summary, err := cmd.CombinedOutput()

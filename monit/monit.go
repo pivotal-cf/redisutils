@@ -104,10 +104,7 @@ func (monit *SysMonit) GetSummary() (Statuses, error) {
 //GetStatus a job specific Status from GetSummary
 func (monit *SysMonit) GetStatus(job string) (Status, error) {
 	summary, err := monit.GetSummary()
-	if err != nil {
-		return 0, err
-	}
-	return summary[job], nil
+	return summary[job], err
 }
 
 //Start is synonymous with `monit start {job}`
@@ -162,11 +159,7 @@ func (monit *SysMonit) jobHasStatus(job string, status Status) (bool, error) {
 	}
 
 	currentStatus, err := monit.GetStatus(job)
-	if err != nil || status == currentStatus {
-		return status == currentStatus, err
-	}
-
-	return false, nil
+	return status == currentStatus, err
 }
 
 func (monit *SysMonit) allJobsHaveStatus(status Status) (bool, error) {
@@ -188,11 +181,7 @@ func (monit *SysMonit) getRawSummary() (string, error) {
 	cmd := monit.getMonitCommand("summary")
 
 	rawSummary, err := cmd.CombinedOutput()
-	if err != nil {
-		return "", err
-	}
-
-	return string(rawSummary), nil
+	return string(rawSummary), err
 }
 
 func (monit *SysMonit) getProcessesFromRawSummary(summary string) [][]string {

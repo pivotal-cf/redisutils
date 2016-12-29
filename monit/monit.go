@@ -2,6 +2,7 @@ package monit
 
 import (
 	"errors"
+	"fmt"
 	"regexp"
 	"time"
 
@@ -104,7 +105,15 @@ func (monit *SysMonit) GetSummary() (Statuses, error) {
 //GetStatus a job specific Status from GetSummary
 func (monit *SysMonit) GetStatus(job string) (Status, error) {
 	summary, err := monit.GetSummary()
-	return summary[job], err
+	if err != nil {
+		return 0, err
+	}
+
+	status, ok := summary[job]
+	if !ok {
+		return status, fmt.Errorf("no such job: `%s`", job)
+	}
+	return status, nil
 }
 
 //Start is synonymous with `monit start {job}`

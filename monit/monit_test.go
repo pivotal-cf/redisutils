@@ -149,15 +149,17 @@ var _ = Describe("monit", func() {
 		var (
 			status       Status
 			getStatusErr error
+			job          string
 		)
 
 		BeforeEach(func() {
+			job = "broker-nginx"
 			exampleSummary := getExampleMonitSummaryAllStatuses()
 			pureFake.Cmd.CombinedOutputReturns(exampleSummary, nil)
 		})
 
 		JustBeforeEach(func() {
-			status, getStatusErr = monit.GetStatus("broker-nginx")
+			status, getStatusErr = monit.GetStatus(job)
 		})
 
 		It("does not return an error", func() {
@@ -177,6 +179,18 @@ var _ = Describe("monit", func() {
 
 			It("returns the error", func() {
 				Expect(getStatusErr).To(MatchError(combinedOutputErr))
+			})
+		})
+
+		Context("when job doesn't exist", func() {
+			noSuchJobErr := errors.New("no such job: `bar`")
+
+			BeforeEach(func() {
+				job = "bar"
+			})
+
+			It("returns an error", func() {
+				Expect(getStatusErr).To(MatchError(noSuchJobErr))
 			})
 		})
 	})

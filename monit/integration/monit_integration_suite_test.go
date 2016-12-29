@@ -10,6 +10,8 @@ import (
 	. "github.com/onsi/gomega"
 )
 
+const monitrcPath = "/home/vcap/monitrc"
+
 func TestMonitIntegration(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Monit Integration Suite")
@@ -79,26 +81,32 @@ func getJobNotMonitoredPattern(job string) *regexp.Regexp {
 }
 
 func startMonit() {
-	cmd := exec.Command("monit", "-c", "/home/vcap/monitrc")
+	cmd := monitCommand()
 	err := cmd.Run()
 	Expect(err).NotTo(HaveOccurred())
 }
 
 func monitStart(job string) {
-	cmd := exec.Command("monit", "-c", "/home/vcap/monitrc", "start", job)
+	cmd := monitCommand("start", job)
 	err := cmd.Run()
 	Expect(err).NotTo(HaveOccurred())
 }
 
 func monitStop(job string) {
-	cmd := exec.Command("monit", "-c", "/home/vcap/monitrc", "stop", job)
+	cmd := monitCommand("stop", job)
 	err := cmd.Run()
 	Expect(err).NotTo(HaveOccurred())
 }
 
 func getMonitSummary() []byte {
-	cmd := exec.Command("monit", "-c", "/home/vcap/monitrc", "summary")
+	cmd := monitCommand("summary")
 	summary, err := cmd.CombinedOutput()
 	Expect(err).NotTo(HaveOccurred())
 	return summary
+}
+
+func monitCommand(args ...string) *exec.Cmd {
+	cmd := exec.Command("monit", "-c", monitrcPath)
+	cmd.Args = append(cmd.Args, args...)
+	return cmd
 }

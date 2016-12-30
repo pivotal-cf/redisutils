@@ -3,6 +3,12 @@ FROM ubuntu:trusty
 RUN apt-get update
 RUN apt-get install -y wget gcc make flex bison git vim
 
+# redis installation
+RUN wget http://download.redis.io/releases/redis-3.2.6.tar.gz
+RUN tar -xvf redis-3.2.6.tar.gz
+RUN cd redis-3.2.6 && make && make install
+RUN rm -r redis-3.2.6 redis-3.2.6.tar.gz
+
 # vcap user creation
 RUN useradd -ms /bin/bash vcap
 ENV VCAP_HOME /home/vcap

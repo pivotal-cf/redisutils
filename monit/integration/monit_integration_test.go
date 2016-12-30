@@ -100,7 +100,7 @@ var _ = Describe("monit", func() {
 			Expect(bazIsRunning()).To(BeTrue())
 		})
 
-		Context("when waiting on `monit stop all`", func() {
+		Context("when waiting on `monit start all`", func() {
 			BeforeEach(func() {
 				process = "all"
 				monitStop("all")

@@ -2,6 +2,7 @@ package iredis
 
 import redis "gopkg.in/redis.v5"
 
+//StatusCmd is an interface around redis.StatusCmd
 type StatusCmd interface {
 	Result() (string, error)
 }

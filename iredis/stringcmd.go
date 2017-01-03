@@ -2,6 +2,7 @@ package iredis
 
 import redis "gopkg.in/redis.v5"
 
+//StringCmd is an interface around redis.StringCmd
 type StringCmd interface {
 	Result() (string, error)
 }

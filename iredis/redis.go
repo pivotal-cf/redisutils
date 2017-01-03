@@ -2,6 +2,7 @@ package iredis
 
 import redis "gopkg.in/redis.v5"
 
+//Redis is an interface around redis
 type Redis interface {
 	NewClient(*redis.Options) Client
 }

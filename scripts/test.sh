@@ -9,6 +9,10 @@ while [[ $# -gt 0 ]]; do
         LOCAL=true
       ;;
 
+      --skip-docker-build)
+        SKIP_BUILD=true
+      ;;
+
       --)
         shift
         GINKGO_ARGS="$@"
@@ -16,7 +20,7 @@ while [[ $# -gt 0 ]]; do
       ;;
 
       *)
-        echo "Usage: test.sh [--local] [-- [ginkgo_arg, ...]]"
+        echo "Usage: test.sh [--local] [--skip-docker-build] [-- [ginkgo_arg, ...]]"
         exit 1
       ;;
   esac
@@ -32,8 +36,10 @@ fi
 
 GINKGO_ARGS=${GINKGO_ARGS:-". -r --race --slowSpecThreshold=15"}
 
-echo "Building docker image..."
-$DIR/docker-build.sh > /dev/null
+if [ "$SKIP_BUILD" != true ]; then
+  echo "Building docker image..."
+  $DIR/docker-build.sh > /dev/null
+fi
 
 echo "Running Ginkgo test suites in docker..."
 pushd $ROOT > /dev/null

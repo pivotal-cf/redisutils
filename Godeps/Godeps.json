@@ -7,6 +7,10 @@
 	],
 	"Deps": [
 		{
+			"ImportPath": "github.com/BooleanCat/igo/iioutil",
+			"Rev": "7bd6d5c6db711409c6347cd42b2dc111cd400c5c"
+		},
+		{
 			"ImportPath": "github.com/BooleanCat/igo/ios",
 			"Rev": "7bd6d5c6db711409c6347cd42b2dc111cd400c5c"
 		},
@@ -162,6 +166,36 @@
 		{
 			"ImportPath": "golang.org/x/sys/unix",
 			"Rev": "d75a52659825e75fff6158388dddc6a5b04f9ba5"
+		},
+		{
+			"ImportPath": "gopkg.in/redis.v5",
+			"Comment": "v5.1.7",
+			"Rev": "8fcba2ea878201b70c5a63dd416141d4ddbc601a"
+		},
+		{
+			"ImportPath": "gopkg.in/redis.v5/internal",
+			"Comment": "v5.1.7",
+			"Rev": "8fcba2ea878201b70c5a63dd416141d4ddbc601a"
+		},
+		{
+			"ImportPath": "gopkg.in/redis.v5/internal/consistenthash",
+			"Comment": "v5.1.7",
+			"Rev": "8fcba2ea878201b70c5a63dd416141d4ddbc601a"
+		},
+		{
+			"ImportPath": "gopkg.in/redis.v5/internal/hashtag",
+			"Comment": "v5.1.7",
+			"Rev": "8fcba2ea878201b70c5a63dd416141d4ddbc601a"
+		},
+		{
+			"ImportPath": "gopkg.in/redis.v5/internal/pool",
+			"Comment": "v5.1.7",
+			"Rev": "8fcba2ea878201b70c5a63dd416141d4ddbc601a"
+		},
+		{
+			"ImportPath": "gopkg.in/redis.v5/internal/proto",
+			"Comment": "v5.1.7",
+			"Rev": "8fcba2ea878201b70c5a63dd416141d4ddbc601a"
 		},
 		{
 			"ImportPath": "gopkg.in/yaml.v2",

@@ -2,11 +2,11 @@ package iredis
 
 import redis "gopkg.in/redis.v5"
 
-type IStatusCmd interface {
+type StatusCmd interface {
 	Result() (string, error)
 }
 
-//StatusCmdWrap is a wrapper around redis that implements iredis.IStatusCmd
+//StatusCmdWrap is a wrapper around redis that implements iredis.StatusCmd
 type StatusCmdWrap struct {
 	statusCmd *redis.StatusCmd
 }

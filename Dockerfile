@@ -52,5 +52,6 @@ RUN rm go1.7.4.linux-amd64.tar.gz
 
 # go packages installation
 RUN go get github.com/onsi/ginkgo/ginkgo
-RUN go get github.com/onsi/gomega
+RUN cd $GOPATH/src/github.com/onsi/ginkgo/ginkgo && git checkout a23f924ce96d61f963fb6219b8ff069d8d768cc2
+RUN go install github.com/onsi/ginkgo/ginkgo
 RUN go get github.com/tools/godep

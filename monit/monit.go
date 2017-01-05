@@ -66,11 +66,13 @@ type Monit interface {
 	StartAndWait(string) error
 	StopAndWait(string) error
 	SetMonitrcPath(string)
+	SetExecutable(string)
 }
 
 //SysMonit is a controller for the monit CLI
 type SysMonit struct {
 	MonitrcPath string
+	Executable  string
 
 	interval time.Duration
 	timeout  time.Duration
@@ -80,10 +82,16 @@ type SysMonit struct {
 //New is the correct way to initialise a new Monit
 func New() *SysMonit {
 	return &SysMonit{
-		interval: time.Millisecond * 100,
-		timeout:  time.Second * 15,
-		exec:     new(iexec.ExecWrap),
+		Executable: "monit",
+		interval:   time.Millisecond * 100,
+		timeout:    time.Second * 15,
+		exec:       new(iexec.ExecWrap),
 	}
+}
+
+//SetMonitExecutable updates monit's executable path
+func (monit *SysMonit) SetExecutable(path string) {
+	monit.Executable = path
 }
 
 //SetMonitrcPath updates monit's target monitrc when making CLI calls
@@ -215,5 +223,5 @@ func (monit *SysMonit) getMonitCommand(args ...string) iexec.Cmd {
 	}
 
 	allArgs = append(allArgs, args...)
-	return monit.exec.Command("monit", allArgs...)
+	return monit.exec.Command(monit.Executable, allArgs...)
 }

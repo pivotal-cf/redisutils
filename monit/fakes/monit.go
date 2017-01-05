@@ -64,6 +64,11 @@ type FakeMonit struct {
 	setMonitrcPathArgsForCall []struct {
 		arg1 string
 	}
+	SetExecutableStub        func(string)
+	setExecutableMutex       sync.RWMutex
+	setExecutableArgsForCall []struct {
+		arg1 string
+	}
 	invocations      map[string][][]interface{}
 	invocationsMutex sync.RWMutex
 }
@@ -304,6 +309,33 @@ func (fake *FakeMonit) SetMonitrcPathArgsForCall(i int) string {
 	return fake.setMonitrcPathArgsForCall[i].arg1
 }
 
+//SetExecutable ...
+func (fake *FakeMonit) SetExecutable(arg1 string) {
+	fake.setExecutableMutex.Lock()
+	fake.setExecutableArgsForCall = append(fake.setExecutableArgsForCall, struct {
+		arg1 string
+	}{arg1})
+	fake.recordInvocation("SetExecutable", []interface{}{arg1})
+	fake.setExecutableMutex.Unlock()
+	if fake.SetExecutableStub != nil {
+		fake.SetExecutableStub(arg1)
+	}
+}
+
+//SetExecutableCallCount ...
+func (fake *FakeMonit) SetExecutableCallCount() int {
+	fake.setExecutableMutex.RLock()
+	defer fake.setExecutableMutex.RUnlock()
+	return len(fake.setExecutableArgsForCall)
+}
+
+//SetExecutableArgsForCall ...
+func (fake *FakeMonit) SetExecutableArgsForCall(i int) string {
+	fake.setExecutableMutex.RLock()
+	defer fake.setExecutableMutex.RUnlock()
+	return fake.setExecutableArgsForCall[i].arg1
+}
+
 //Invocations ...
 func (fake *FakeMonit) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
@@ -322,6 +354,8 @@ func (fake *FakeMonit) Invocations() map[string][][]interface{} {
 	defer fake.stopAndWaitMutex.RUnlock()
 	fake.setMonitrcPathMutex.RLock()
 	defer fake.setMonitrcPathMutex.RUnlock()
+	fake.setExecutableMutex.RLock()
+	defer fake.setExecutableMutex.RUnlock()
 	return fake.invocations
 }
 

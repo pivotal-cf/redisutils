@@ -96,6 +96,16 @@ var _ = Describe("monit", func() {
 			})
 		})
 
+		Context("when a monit executable is configured", func() {
+			BeforeEach(func() {
+				monit.Executable = "/foo/bar"
+			})
+
+			It("runs that executable", func() {
+				Expect(command).To(Equal("/foo/bar"))
+			})
+		})
+
 		Context("when one process is `stopped`", func() {
 			expectedSummary := Statuses{
 				"process-watcher":   StatusRunning,
@@ -199,6 +209,13 @@ var _ = Describe("monit", func() {
 		It("sets correctly", func() {
 			monit.SetMonitrcPath("/foo/bar")
 			Expect(monit.MonitrcPath).To(Equal("/foo/bar"))
+		})
+	})
+
+	Describe("#SetExecutable", func() {
+		It("sets correctly", func() {
+			monit.SetExecutable("foo/bar")
+			Expect(monit.Executable).To(Equal("foo/bar"))
 		})
 	})
 })

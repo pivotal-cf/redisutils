@@ -47,18 +47,18 @@ var _ = Describe("monit", func() {
 		})
 
 		It("runs `monit stop foo`", func() {
-			Expect(pureFake.Cmd.RunCallCount()).To(Equal(1))
+			Expect(pureFake.Cmd.CombinedOutputCallCount()).To(Equal(1))
 		})
 
-		Context("when run returns an error", func() {
-			runErr := errors.New("Run failed")
+		Context("when CombinedOutput returns an error", func() {
+			combinedOutputErr := errors.New("Run failed")
 
 			BeforeEach(func() {
-				pureFake.Cmd.RunReturns(runErr)
+				pureFake.Cmd.CombinedOutputReturns([]byte("Run failed"), errors.New(""))
 			})
 
-			It("returns the error", func() {
-				Expect(stopErr).To(MatchError(runErr))
+			It("it propagates the stdout message to the start error message", func() {
+				Expect(stopErr).To(MatchError(combinedOutputErr))
 			})
 		})
 	})
@@ -95,10 +95,10 @@ var _ = Describe("monit", func() {
 
 		Context("when GetStatus returns StatusNotMoitored some time later", func() {
 			BeforeEach(func() {
-				pureFake.Cmd.CombinedOutputStub = combinedOutputReturns([][]byte{
-					[]byte("Process 'foo' running"),
-					[]byte("Process 'foo' running"),
-					[]byte("Process 'foo' not monitored"),
+				pureFake.Cmd.CombinedOutputStub = combinedOutputReturns([]byteSliceAndError{
+					{[]byte("Process 'foo' running"), nil},
+					{[]byte("Process 'foo' running"), nil},
+					{[]byte("Process 'foo' not monitored"), nil},
 				}).sequentially
 
 				monit.interval = time.Duration(0)
@@ -136,7 +136,10 @@ var _ = Describe("monit", func() {
 				getSummaryError := errors.New("GetSummary failed")
 
 				BeforeEach(func() {
-					pureFake.Cmd.CombinedOutputReturns(nil, getSummaryError)
+					pureFake.Cmd.CombinedOutputStub = combinedOutputReturns([]byteSliceAndError{
+						{nil, nil},
+						{nil, getSummaryError},
+					}).sequentially
 				})
 
 				It("returns the error", func() {
@@ -145,10 +148,10 @@ var _ = Describe("monit", func() {
 			})
 
 			Context("when GetSummary reports all not monitored some time later", func() {
-				summaries := [][]byte{
-					[]byte("Process 'foo' running\nProcess 'bar' running"),
-					[]byte("Process 'foo' not monitored\nProcess 'bar' running"),
-					[]byte("Process 'foo' not monitored\nProcess 'bar' not monitored"),
+				summaries := []byteSliceAndError{
+					{[]byte("Process 'foo' running\nProcess 'bar' running"), nil},
+					{[]byte("Process 'foo' not monitored\nProcess 'bar' running"), nil},
+					{[]byte("Process 'foo' not monitored\nProcess 'bar' not monitored"), nil},
 				}
 
 				BeforeEach(func() {
@@ -170,7 +173,7 @@ var _ = Describe("monit", func() {
 			stopErr := errors.New("Stop failed")
 
 			BeforeEach(func() {
-				pureFake.Cmd.RunReturns(stopErr)
+				pureFake.Cmd.CombinedOutputReturns([]byte("Stop failed"), errors.New(""))
 			})
 
 			It("returns the error", func() {
@@ -182,7 +185,7 @@ var _ = Describe("monit", func() {
 			getStatusErr := errors.New("GetStatus failed")
 
 			BeforeEach(func() {
-				pureFake.Cmd.CombinedOutputReturns(nil, getStatusErr)
+				pureFake.Cmd.CombinedOutputReturns([]byte("GetStatus failed"), errors.New(""))
 			})
 
 			It("returns the error", func() {

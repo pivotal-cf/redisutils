@@ -41,16 +41,21 @@ func joinCommand(command string, args []string) string {
 	return strings.Join(append(joined, args...), " ")
 }
 
-func combinedOutputReturns(returns [][]byte) *combinedOutput {
+func combinedOutputReturns(returns []byteSliceAndError) *combinedOutput {
 	return &combinedOutput{returnIndex: -1, returns: returns}
 }
 
+type byteSliceAndError struct {
+	byteSlice []byte
+	err       error
+}
+
 type combinedOutput struct {
-	returns     [][]byte
+	returns     []byteSliceAndError
 	returnIndex int
 }
 
 func (c *combinedOutput) sequentially() ([]byte, error) {
 	c.returnIndex++
-	return c.returns[c.returnIndex], nil
+	return c.returns[c.returnIndex].byteSlice, c.returns[c.returnIndex].err
 }

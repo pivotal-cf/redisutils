@@ -60,11 +60,16 @@ var _ = Describe("monit", func() {
 
 	Describe("#Start", func() {
 		var startErr error
+		var processName string
 
 		BeforeEach(func() {
 			monitStop("baz")
 			Eventually(bazIsNotMonitored, "15s").Should(BeTrue())
-			startErr = testMonit.Start("baz")
+			processName = "baz"
+		})
+
+		JustBeforeEach(func() {
+			startErr = testMonit.Start(processName)
 		})
 
 		It("starts baz", func() {
@@ -73,6 +78,16 @@ var _ = Describe("monit", func() {
 
 			By("and starting baz")
 			Eventually(bazIsRunning, "10s").Should(BeTrue())
+		})
+
+		Context("when a process doesn't exist", func() {
+			BeforeEach(func() {
+				processName = "doesntexist"
+			})
+
+			It("returns the correct error message", func() {
+				Expect(startErr.Error()).To(ContainSubstring("There is no service by that name"))
+			})
 		})
 	})
 

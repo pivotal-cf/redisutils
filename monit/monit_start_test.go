@@ -11,14 +11,14 @@ import (
 
 var _ = Describe("monit", func() {
 	var (
-		monit    *SysMonit
-		pureFake *iexec.PureFake
+		monit *SysMonit
+		fakes *iexec.NestedCommandFake
 	)
 
 	BeforeEach(func() {
 		monit = New()
-		pureFake = iexec.NewPureFake()
-		monit.exec = pureFake.Exec
+		fakes = iexec.NewNestedCommandFake()
+		monit.exec = fakes.Exec
 	})
 
 	Describe("#Start", func() {
@@ -30,8 +30,8 @@ var _ = Describe("monit", func() {
 
 		JustBeforeEach(func() {
 			startErr = monit.Start("foo")
-			Expect(pureFake.Exec.CommandCallCount()).To(Equal(1))
-			command, args = pureFake.Exec.CommandArgsForCall(0)
+			Expect(fakes.Exec.CommandCallCount()).To(Equal(1))
+			command, args = fakes.Exec.CommandArgsForCall(0)
 		})
 
 		It("does not return an error", func() {
@@ -47,14 +47,14 @@ var _ = Describe("monit", func() {
 		})
 
 		It("runs `monit start foo`", func() {
-			Expect(pureFake.Cmd.CombinedOutputCallCount()).To(Equal(1))
+			Expect(fakes.Cmd.CombinedOutputCallCount()).To(Equal(1))
 		})
 
 		Context("when CombinedOutput returns an error", func() {
 			runErr := errors.New("CombinedOutput failed")
 
 			BeforeEach(func() {
-				pureFake.Cmd.CombinedOutputReturns([]byte("CombinedOutput failed"), errors.New(""))
+				fakes.Cmd.CombinedOutputReturns([]byte("CombinedOutput failed"), errors.New(""))
 			})
 
 			It("it propagates the stdout message to the start error message", func() {
@@ -72,7 +72,7 @@ var _ = Describe("monit", func() {
 		BeforeEach(func() {
 			process = "foo"
 			output := []byte("Process 'foo' running")
-			pureFake.Cmd.CombinedOutputReturns(output, nil)
+			fakes.Cmd.CombinedOutputReturns(output, nil)
 		})
 
 		JustBeforeEach(func() {
@@ -84,18 +84,18 @@ var _ = Describe("monit", func() {
 		})
 
 		It("calls `monit stop {job}`", func() {
-			command := joinCommand(pureFake.Exec.CommandArgsForCall(0))
+			command := joinCommand(fakes.Exec.CommandArgsForCall(0))
 			Expect(command).To(Equal("monit start foo"))
 		})
 
 		It("calls `monit summary`", func() {
-			command := joinCommand(pureFake.Exec.CommandArgsForCall(1))
+			command := joinCommand(fakes.Exec.CommandArgsForCall(1))
 			Expect(command).To(Equal("monit summary"))
 		})
 
 		Context("When GetStatus returns StatusRunning some time later", func() {
 			BeforeEach(func() {
-				pureFake.Cmd.CombinedOutputStub = combinedOutputReturns([]byteSliceAndError{
+				fakes.Cmd.CombinedOutputStub = combinedOutputReturns([]byteSliceAndError{
 					{[]byte("Process 'foo' not monitored"), nil},
 					{[]byte("Process 'foo' not monitored"), nil},
 					{[]byte("Process 'foo' running"), nil},
@@ -109,7 +109,7 @@ var _ = Describe("monit", func() {
 			})
 
 			It("calls `monit summary` multiple times", func() {
-				Expect(pureFake.Cmd.CombinedOutputCallCount()).To(Equal(3))
+				Expect(fakes.Cmd.CombinedOutputCallCount()).To(Equal(3))
 			})
 		})
 
@@ -123,12 +123,12 @@ var _ = Describe("monit", func() {
 			})
 
 			It("calls `monit start all`", func() {
-				command := joinCommand(pureFake.Exec.CommandArgsForCall(0))
+				command := joinCommand(fakes.Exec.CommandArgsForCall(0))
 				Expect(command).To(Equal("monit start all"))
 			})
 
 			It("calls `monit summary`", func() {
-				command := joinCommand(pureFake.Exec.CommandArgsForCall(1))
+				command := joinCommand(fakes.Exec.CommandArgsForCall(1))
 				Expect(command).To(Equal("monit summary"))
 			})
 
@@ -136,7 +136,7 @@ var _ = Describe("monit", func() {
 				getSummaryError := errors.New("GetSummary failed")
 
 				BeforeEach(func() {
-					pureFake.Cmd.CombinedOutputStub = combinedOutputReturns([]byteSliceAndError{
+					fakes.Cmd.CombinedOutputStub = combinedOutputReturns([]byteSliceAndError{
 						{nil, nil},
 						{nil, getSummaryError},
 					}).sequentially
@@ -155,7 +155,7 @@ var _ = Describe("monit", func() {
 				}
 
 				BeforeEach(func() {
-					pureFake.Cmd.CombinedOutputStub = combinedOutputReturns(summaries).sequentially
+					fakes.Cmd.CombinedOutputStub = combinedOutputReturns(summaries).sequentially
 					monit.interval = time.Duration(0)
 				})
 
@@ -164,7 +164,7 @@ var _ = Describe("monit", func() {
 				})
 
 				It("calls `monit summary` multiple times", func() {
-					Expect(pureFake.Cmd.CombinedOutputCallCount()).To(Equal(3))
+					Expect(fakes.Cmd.CombinedOutputCallCount()).To(Equal(3))
 				})
 			})
 		})
@@ -173,7 +173,7 @@ var _ = Describe("monit", func() {
 			startErr := errors.New("Start failed")
 
 			BeforeEach(func() {
-				pureFake.Cmd.CombinedOutputReturns([]byte("Start failed"), startErr)
+				fakes.Cmd.CombinedOutputReturns([]byte("Start failed"), startErr)
 			})
 
 			It("returns the error", func() {
@@ -185,7 +185,7 @@ var _ = Describe("monit", func() {
 			getStatusErr := errors.New("GetStatus failed")
 
 			BeforeEach(func() {
-				pureFake.Cmd.CombinedOutputReturns([]byte("GetStatus failed"), getStatusErr)
+				fakes.Cmd.CombinedOutputReturns([]byte("GetStatus failed"), getStatusErr)
 			})
 
 			It("returns the error", func() {
@@ -196,7 +196,7 @@ var _ = Describe("monit", func() {
 		Context("when waiting times out", func() {
 			BeforeEach(func() {
 				monit.timeout = time.Duration(0)
-				pureFake.Cmd.CombinedOutputReturns(nil, nil)
+				fakes.Cmd.CombinedOutputReturns(nil, nil)
 			})
 
 			It("returns an error", func() {

@@ -1,22 +1,22 @@
 {
 	"ImportPath": "github.com/pivotal-cf/redisutils",
 	"GoVersion": "go1.7",
-	"GodepVersion": "v75",
+	"GodepVersion": "v76",
 	"Packages": [
 		"./..."
 	],
 	"Deps": [
 		{
 			"ImportPath": "github.com/BooleanCat/igo/iioutil",
-			"Rev": "7bd6d5c6db711409c6347cd42b2dc111cd400c5c"
+			"Rev": "61e7b9157ee3038f6a1737d399f0fc126f62b143"
 		},
 		{
 			"ImportPath": "github.com/BooleanCat/igo/ios",
-			"Rev": "7bd6d5c6db711409c6347cd42b2dc111cd400c5c"
+			"Rev": "61e7b9157ee3038f6a1737d399f0fc126f62b143"
 		},
 		{
 			"ImportPath": "github.com/BooleanCat/igo/ios/iexec",
-			"Rev": "7bd6d5c6db711409c6347cd42b2dc111cd400c5c"
+			"Rev": "61e7b9157ee3038f6a1737d399f0fc126f62b143"
 		},
 		{
 			"ImportPath": "github.com/onsi/ginkgo",

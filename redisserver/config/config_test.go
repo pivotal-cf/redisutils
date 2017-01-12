@@ -15,11 +15,11 @@ var _ = Describe("config", func() {
 	var (
 		config      fmt.Stringer
 		stringyfied string
-		ioutilFake  *iioutil.IoutilFake
+		ioutilFake  *iioutil.Fake
 	)
 
 	BeforeEach(func() {
-		ioutilFake = new(iioutil.IoutilFake)
+		ioutilFake = iioutil.NewFake()
 	})
 
 	JustBeforeEach(func() {

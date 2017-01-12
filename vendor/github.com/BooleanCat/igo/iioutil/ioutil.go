@@ -16,35 +16,40 @@ type Ioutil interface {
 	WriteFile(string, []byte, os.FileMode) error
 }
 
-//IoutilWrap is a wrapper around os that implements iioutil.Ioutil
-type IoutilWrap struct{}
+//Real is a wrapper around os that implements iioutil.Ioutil
+type Real struct{}
+
+//New creates a struct that behaves like the ioutil package
+func New() *Real {
+	return new(Real)
+}
 
 //ReadAll is a wrapper around ioutil.ReadAll()
-func (iow *IoutilWrap) ReadAll(r io.Reader) ([]byte, error) {
+func (*Real) ReadAll(r io.Reader) ([]byte, error) {
 	return ioutil.ReadAll(r)
 }
 
 //ReadDir is a wrapper around ioutil.ReadDir()
-func (iow *IoutilWrap) ReadDir(dirname string) ([]os.FileInfo, error) {
+func (*Real) ReadDir(dirname string) ([]os.FileInfo, error) {
 	return ioutil.ReadDir(dirname)
 }
 
 //ReadFile is a wrapper around ioutil.ReadFile()
-func (iow *IoutilWrap) ReadFile(filename string) ([]byte, error) {
+func (*Real) ReadFile(filename string) ([]byte, error) {
 	return ioutil.ReadFile(filename)
 }
 
 //TempDir is a wrapper around ioutil.TempDir()
-func (iow *IoutilWrap) TempDir(dir, prefix string) (string, error) {
+func (*Real) TempDir(dir, prefix string) (string, error) {
 	return ioutil.TempDir(dir, prefix)
 }
 
 //TempFile is a wrapper around ioutil.TempDir()
-func (iow *IoutilWrap) TempFile(dir, prefix string) (*os.File, error) {
+func (*Real) TempFile(dir, prefix string) (*os.File, error) {
 	return ioutil.TempFile(dir, prefix)
 }
 
 //WriteFile is a wrapper around ioutil.TempDir()
-func (iow *IoutilWrap) WriteFile(filename string, data []byte, perm os.FileMode) error {
+func (*Real) WriteFile(filename string, data []byte, perm os.FileMode) error {
 	return ioutil.WriteFile(filename, data, perm)
 }

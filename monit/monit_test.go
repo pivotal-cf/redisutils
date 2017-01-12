@@ -11,14 +11,14 @@ import (
 
 var _ = Describe("monit", func() {
 	var (
-		monit    *SysMonit
-		pureFake *iexec.PureFake
+		monit *SysMonit
+		fakes *iexec.NestedCommandFake
 	)
 
 	BeforeEach(func() {
 		monit = New()
-		pureFake = iexec.NewPureFake()
-		monit.exec = pureFake.Exec
+		fakes = iexec.NewNestedCommandFake()
+		monit.exec = fakes.Exec
 	})
 
 	Describe("#GetSummary", func() {
@@ -32,13 +32,13 @@ var _ = Describe("monit", func() {
 
 		BeforeEach(func() {
 			exampleSummary = getExampleMonitSummary()
-			pureFake.Cmd.CombinedOutputReturns(exampleSummary, nil)
+			fakes.Cmd.CombinedOutputReturns(exampleSummary, nil)
 		})
 
 		JustBeforeEach(func() {
 			summary, getSummaryErr = monit.GetSummary()
-			Expect(pureFake.Exec.CommandCallCount()).To(Equal(1))
-			command, args = pureFake.Exec.CommandArgsForCall(0)
+			Expect(fakes.Exec.CommandCallCount()).To(Equal(1))
+			command, args = fakes.Exec.CommandArgsForCall(0)
 		})
 
 		It("does not return an error", func() {
@@ -65,7 +65,7 @@ var _ = Describe("monit", func() {
 		})
 
 		It("runs `monit summary`", func() {
-			Expect(pureFake.Cmd.CombinedOutputCallCount()).To(Equal(1))
+			Expect(fakes.Cmd.CombinedOutputCallCount()).To(Equal(1))
 		})
 
 		It("doesn't specify a monitrc path when calling `monit summary`", func() {
@@ -77,7 +77,7 @@ var _ = Describe("monit", func() {
 			combinedOutputErr := errors.New("CombinedOutput failed")
 
 			BeforeEach(func() {
-				pureFake.Cmd.CombinedOutputReturns(nil, combinedOutputErr)
+				fakes.Cmd.CombinedOutputReturns(nil, combinedOutputErr)
 			})
 
 			It("returns the error", func() {
@@ -117,7 +117,7 @@ var _ = Describe("monit", func() {
 
 			BeforeEach(func() {
 				exampleSummary = getExampleMonitSummaryOneStopped()
-				pureFake.Cmd.CombinedOutputReturns(exampleSummary, nil)
+				fakes.Cmd.CombinedOutputReturns(exampleSummary, nil)
 			})
 
 			It("does not return an error", func() {
@@ -142,7 +142,7 @@ var _ = Describe("monit", func() {
 
 			BeforeEach(func() {
 				exampleSummary = getExampleMonitSummaryAllStatuses()
-				pureFake.Cmd.CombinedOutputReturns(exampleSummary, nil)
+				fakes.Cmd.CombinedOutputReturns(exampleSummary, nil)
 			})
 
 			It("does not return an error", func() {
@@ -165,7 +165,7 @@ var _ = Describe("monit", func() {
 		BeforeEach(func() {
 			job = "broker-nginx"
 			exampleSummary := getExampleMonitSummaryAllStatuses()
-			pureFake.Cmd.CombinedOutputReturns(exampleSummary, nil)
+			fakes.Cmd.CombinedOutputReturns(exampleSummary, nil)
 		})
 
 		JustBeforeEach(func() {
@@ -184,7 +184,7 @@ var _ = Describe("monit", func() {
 			combinedOutputErr := errors.New("CombinedOutput failed")
 
 			BeforeEach(func() {
-				pureFake.Cmd.CombinedOutputReturns(nil, combinedOutputErr)
+				fakes.Cmd.CombinedOutputReturns(nil, combinedOutputErr)
 			})
 
 			It("returns the error", func() {

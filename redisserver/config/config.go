@@ -17,7 +17,7 @@ func (config Config) String() string {
 
 //ToFile writes the stringyfied config to a `redis.conf` file at path
 func (config Config) ToFile(path string) error {
-	return config.toFile(path, new(iioutil.IoutilWrap))
+	return config.toFile(path, iioutil.New())
 }
 
 func (config Config) toFile(path string, ioutil iioutil.Ioutil) error {

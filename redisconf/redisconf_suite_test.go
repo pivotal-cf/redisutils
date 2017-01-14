@@ -1,6 +1,7 @@
 package redisconf
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -8,6 +9,7 @@ import (
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"github.com/onsi/gomega/types"
 )
 
 func TestRedisconf(t *testing.T) {
@@ -26,4 +28,14 @@ func removeTempDir(dir string) {
 		os.RemoveAll(dir)
 		Expect(dir).NotTo(BeAnExistingFile())
 	}
+}
+
+func readFile(path string) string {
+	contents, err := ioutil.ReadFile(path)
+	Expect(err).NotTo(HaveOccurred())
+	return string(contents)
+}
+
+func containLine(line string) types.GomegaMatcher {
+	return MatchRegexp(fmt.Sprintf("(?m)^%s$", line))
 }

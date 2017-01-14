@@ -1,6 +1,7 @@
 package redisconf
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/BooleanCat/igo/iioutil"
@@ -53,5 +54,14 @@ func (c *Conf) SetRenameCommand(string, string) {}
 
 //Save the config to disk
 func (c *Conf) Save(path string) error {
-	return c.ioutil.WriteFile(path, nil, os.ModePerm)
+	contents := c.encode()
+	return c.ioutil.WriteFile(path, []byte(contents), os.ModePerm)
+}
+
+func (c *Conf) encode() (contents string) {
+	for config, value := range c.configs {
+		line := fmt.Sprintf("%s %s", config, value)
+		contents = contents + line + "\n"
+	}
+	return
 }

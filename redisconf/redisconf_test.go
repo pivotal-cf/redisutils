@@ -51,6 +51,7 @@ var _ = Describe("redisconf", func() {
 			saveErr       error
 			tempDir       string
 			redisConfPath string
+			savedConf     string
 		)
 
 		BeforeEach(func() {
@@ -60,6 +61,9 @@ var _ = Describe("redisconf", func() {
 
 		JustBeforeEach(func() {
 			saveErr = redisConf.Save(redisConfPath)
+			if saveErr == nil {
+				savedConf = readFile(redisConfPath)
+			}
 		})
 
 		AfterEach(func() {
@@ -72,6 +76,21 @@ var _ = Describe("redisconf", func() {
 
 		It("creates a file on disk", func() {
 			Expect(redisConfPath).To(BeAnExistingFile())
+		})
+
+		It("writes default configs", func() {
+			Expect(savedConf).To(containLine("host localhost"))
+			Expect(savedConf).To(containLine("port 6379"))
+		})
+
+		Context("when a config is set", func() {
+			BeforeEach(func() {
+				redisConf.Set("foo", "bar")
+			})
+
+			It("saves the config", func() {
+				Expect(savedConf).To(containLine("foo bar"))
+			})
 		})
 
 		Context("when ioutil.WriteFile returns an error", func() {

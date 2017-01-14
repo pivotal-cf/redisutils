@@ -7,12 +7,12 @@ type StringCmd interface {
 	Result() (string, error)
 }
 
-//StringCmdWrap is a wrapper around redis that implements iredis.StringCmd
-type StringCmdWrap struct {
+//StringCmdReal is a wrapper around redis that implements iredis.StringCmd
+type StringCmdReal struct {
 	stringCmd *redis.StringCmd
 }
 
 //Result is a wrapper around redis.StringCmd.Result()
-func (scw *StringCmdWrap) Result() (string, error) {
-	return scw.stringCmd.Result()
+func (cmd *StringCmdReal) Result() (string, error) {
+	return cmd.stringCmd.Result()
 }

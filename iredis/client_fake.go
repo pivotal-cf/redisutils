@@ -37,6 +37,11 @@ type ClientFake struct {
 	invocationsMutex sync.RWMutex
 }
 
+//NewClientFake is the preferred way to initialise a Fake
+func NewClientFake() *ClientFake {
+	return new(ClientFake)
+}
+
 //Close ...
 func (fake *ClientFake) Close() error {
 	fake.closeMutex.Lock()

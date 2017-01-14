@@ -7,10 +7,10 @@ type Redis interface {
 	NewClient(*redis.Options) Client
 }
 
-//RedisWrap is a wrapper around redis that implements iredis.Redis
-type RedisWrap struct{}
+//Real is a wrapper around redis that implements iredis.Redis
+type Real struct{}
 
-//NewClient is a wrapper around redis.NewClient()
-func (*RedisWrap) NewClient(opt *redis.Options) Client {
-	return &ClientWrap{client: redis.NewClient(opt)}
+//New creates a struct that behaves like the redis package
+func New() *Real {
+	return new(Real)
 }

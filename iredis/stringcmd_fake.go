@@ -18,6 +18,11 @@ type StringCmdFake struct {
 	invocationsMutex sync.RWMutex
 }
 
+//NewStringCmdFake is the preferred way to initialise a StringCmdFake
+func NewStringCmdFake() *StringCmdFake {
+	return new(StringCmdFake)
+}
+
 //Result ...
 func (fake *StringCmdFake) Result() (string, error) {
 	fake.resultMutex.Lock()

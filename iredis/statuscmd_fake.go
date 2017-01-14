@@ -18,6 +18,11 @@ type StatusCmdFake struct {
 	invocationsMutex sync.RWMutex
 }
 
+//NewStatusCmdFake is the preferred way to initialise a StatusCmdFake
+func NewStatusCmdFake() *StatusCmdFake {
+	return new(StatusCmdFake)
+}
+
 //Result ...
 func (fake *StatusCmdFake) Result() (string, error) {
 	fake.resultMutex.Lock()

@@ -8,42 +8,42 @@ import (
 
 var _ = Describe("interfaces", func() {
 	Describe("Redis", func() {
-		It("is implemented by iredis.RedisWrap", func() {
-			var _ iredis.Redis = new(iredis.RedisWrap)
+		It("is implemented by iredis.Real", func() {
+			var _ iredis.Redis = iredis.New()
 		})
 
-		It("is implemented by iredis.RedisFake", func() {
-			var _ iredis.Redis = new(iredis.RedisFake)
+		It("is implemented by iredis.Fake", func() {
+			var _ iredis.Redis = iredis.NewFake()
 		})
 	})
 
 	Describe("Client", func() {
-		It("is implemented by iredis.ClientWrap", func() {
-			var _ iredis.Client = new(iredis.ClientWrap)
+		It("is implemented by iredis.ClientReal", func() {
+			var _ iredis.Client = new(iredis.ClientReal)
 		})
 
 		It("is implemented by iredis.ClientFake", func() {
-			var _ iredis.Client = new(iredis.ClientFake)
+			var _ iredis.Client = iredis.NewClientFake()
 		})
 	})
 
 	Describe("StatusCmd", func() {
-		It("is implemented by iredis.StatusCmdWrap", func() {
-			var _ iredis.StatusCmd = new(iredis.StatusCmdWrap)
+		It("is implemented by iredis.StatusCmdReal", func() {
+			var _ iredis.StatusCmd = new(iredis.StatusCmdReal)
 		})
 
 		It("is implemented by iredis.StatusCmdFake", func() {
-			var _ iredis.StatusCmd = new(iredis.StatusCmdFake)
+			var _ iredis.StatusCmd = iredis.NewStatusCmdFake()
 		})
 	})
 
 	Describe("StringCmd", func() {
-		It("is implemented by iredis.StringCmdWrap", func() {
-			var _ iredis.StringCmd = new(iredis.StringCmdWrap)
+		It("is implemented by iredis.StringCmdReal", func() {
+			var _ iredis.StringCmd = new(iredis.StringCmdReal)
 		})
 
 		It("is implemented by iredis.StringCmdFake", func() {
-			var _ iredis.StringCmd = new(iredis.StringCmdFake)
+			var _ iredis.StringCmd = iredis.NewStringCmdFake()
 		})
 	})
 })

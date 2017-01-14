@@ -7,12 +7,17 @@ type StatusCmd interface {
 	Result() (string, error)
 }
 
-//StatusCmdWrap is a wrapper around redis that implements iredis.StatusCmd
-type StatusCmdWrap struct {
+//StatusCmdReal is a wrapper around redis that implements iredis.StatusCmd
+type StatusCmdReal struct {
 	statusCmd *redis.StatusCmd
 }
 
+//NewStatusCmd is a wrapper around redis.NewStatusCmd()
+func NewStatusCmd(args ...interface{}) StatusCmd {
+	return &StatusCmdReal{statusCmd: redis.NewStatusCmd(args...)}
+}
+
 //Result is a wrapper around redis.StatusCmd.Result()
-func (scw *StatusCmdWrap) Result() (string, error) {
-	return scw.statusCmd.Result()
+func (cmd *StatusCmdReal) Result() (string, error) {
+	return cmd.statusCmd.Result()
 }

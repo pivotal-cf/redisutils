@@ -12,7 +12,7 @@ import (
 
 func TestMonit(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Monit Suite")
+	RunSpecs(t, "monit suite")
 }
 
 func readFile(path string) []byte {

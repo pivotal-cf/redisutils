@@ -9,5 +9,5 @@ import (
 
 func TestIRedis(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "IRedis Suite")
+	RunSpecs(t, "iredis suite")
 }

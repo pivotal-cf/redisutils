@@ -9,5 +9,5 @@ import (
 
 func TestRedisServer(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "RedisServer Suite")
+	RunSpecs(t, "redisserver suite")
 }

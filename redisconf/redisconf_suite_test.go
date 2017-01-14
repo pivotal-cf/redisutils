@@ -1,4 +1,4 @@
-package config
+package redisconf
 
 import (
 	"io/ioutil"
@@ -10,26 +10,20 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-func TestConfig(t *testing.T) {
+func TestRedisconf(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Config Suite")
+	RunSpecs(t, "redisconf suite")
 }
 
 func createTempDir() string {
-	tempDir, err := ioutil.TempDir("", "")
+	dir, err := ioutil.TempDir("", "")
 	Expect(err).NotTo(HaveOccurred())
-	return tempDir
+	return dir
 }
 
-func removeAllIfTemp(dir string) {
+func removeTempDir(dir string) {
 	if strings.HasPrefix(dir, os.TempDir()) {
 		os.RemoveAll(dir)
 		Expect(dir).NotTo(BeAnExistingFile())
 	}
-}
-
-func readFile(path string) string {
-	contents, err := ioutil.ReadFile(path)
-	Expect(err).NotTo(HaveOccurred())
-	return string(contents)
 }

@@ -14,7 +14,7 @@ const monitrcPath = "/home/vcap/monitrc"
 
 func TestMonitIntegration(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Monit Integration Suite")
+	RunSpecs(t, "monit integration suite")
 }
 
 var _ = BeforeSuite(func() {

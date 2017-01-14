@@ -1,4 +1,4 @@
-package iredis
+package iredis_test
 
 import (
 	"testing"

@@ -68,6 +68,30 @@ var _ = Describe("redisconf", func() {
 				})
 			})
 		})
+
+		Describe("Append", func() {
+			var (
+				redisConf   RedisConf
+				appendError error
+			)
+
+			BeforeEach(func() {
+				redisConf = RedisConf{NewConf("hello", "brother", "mine")}
+				appendError = redisConf.Append(NewConf("hi", "mycroft"))
+			})
+
+			It("succeeds", func() {
+				Expect(appendError).NotTo(HaveOccurred())
+			})
+
+			It("appends the Conf", func() {
+				expectedConf := RedisConf{
+					NewConf("hello", "brother", "mine"),
+					NewConf("hi", "mycroft"),
+				}
+				Expect(redisConf).To(Equal(expectedConf))
+			})
+		})
 	})
 
 })

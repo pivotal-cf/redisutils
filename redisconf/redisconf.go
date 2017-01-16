@@ -32,6 +32,7 @@ func (rc *RedisConf) Encode() (encoded string) {
 }
 
 func (rc *RedisConf) Append(confs ...Conf) error {
+	*rc = append(*rc, confs...)
 	return nil
 }
 

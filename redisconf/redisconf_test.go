@@ -1,94 +1,164 @@
-package redisconf
+package redisconf_test
 
 import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+
+	"github.com/pivotal-cf/redisutils/redisconf"
 )
 
 var _ = Describe("redisconf", func() {
-	var c Conf
+	Describe("Directive", func() {
+		var (
+			directive    redisconf.Directive
+			directiveErr error
+		)
 
-	Describe("Conf", func() {
-		BeforeEach(func() {
-			c = NewConf("hello", "brother", "mine")
-		})
-
-		It("assigns the keyword correctly", func() {
-			Expect(c.Keyword).To(Equal("hello"))
-		})
-
-		It("assigns the args correctly", func() {
-			expectedArgs := []string{"brother", "mine"}
-			Expect(c.Args).To(Equal(expectedArgs))
-		})
-
-		Context("without args", func() {
+		Describe("#NewDirective", func() {
 			BeforeEach(func() {
-				c = NewConf("hello")
+				directive, directiveErr = redisconf.NewDirective("hello", "brother", "mine")
 			})
 
-			It("assigns the keyword correctly", func() {
-				Expect(c.Keyword).To(Equal("hello"))
+			It("does not return an error", func() {
+				Expect(directiveErr).NotTo(HaveOccurred())
 			})
 
-			It("assigns the args correctly", func() {
-				Expect(c.Args).To(BeEmpty())
+			It("assigns Keyword correctly", func() {
+				Expect(directive.Keyword).To(Equal("hello"))
+			})
+
+			It("assigns Args correctly", func() {
+				expectedArgs := []string{"brother", "mine"}
+				Expect(directive.Args).To(Equal(expectedArgs))
+			})
+
+			Context("when no Args are provided", func() {
+				BeforeEach(func() {
+					directive, directiveErr = redisconf.NewDirective("hello")
+				})
+
+				It("does not return an error", func() {
+					Expect(directiveErr).NotTo(HaveOccurred())
+				})
+
+				It("assigns Keyword correctly", func() {
+					Expect(directive.Keyword).To(Equal("hello"))
+				})
+
+				It("assigns Args correctly", func() {
+					Expect(directive.Args).To(BeEmpty())
+				})
 			})
 		})
 
 		Describe("String", func() {
+			BeforeEach(func() {
+				directive = newDirective("hello", "brother", "mine")
+			})
+
 			It("converts to space separated string", func() {
-				Expect(c.String()).To(Equal("hello brother mine"))
+				Expect(directive.String()).To(Equal("hello brother mine"))
 			})
 		})
 	})
 
 	Describe("RedisConf", func() {
-		Describe("Encode", func() {
-			var redisConf RedisConf
+		var (
+			redisConf    redisconf.RedisConf
+			redisConfErr error
+		)
 
+		Describe("#New", func() {
 			BeforeEach(func() {
-				redisConf = RedisConf{
-					NewConf("hello", "brother", "mine"),
-					NewConf("did", "you", "miss", "me"),
-				}
+				redisConf, redisConfErr = redisconf.New()
 			})
 
-			It("encodes a RedisConf as newline separated Confs", func() {
-				Expect(redisConf.Encode()).To(Equal("hello brother mine\ndid you miss me\n"))
+			It("does not return an error", func() {
+				Expect(redisConfErr).NotTo(HaveOccurred())
 			})
 
-			Context("when the RedisConf is empty", func() {
+			It("initialises empty", func() {
+				Expect(redisConf).To(HaveLen(0))
+			})
+
+			Context("when given a directive", func() {
 				BeforeEach(func() {
-					redisConf = RedisConf{}
+					redisConf, redisConfErr = redisconf.New(
+						redisconf.Directive{"foo", redisconf.Args{"bar"}},
+					)
 				})
 
-				It("returns an empty string", func() {
-					Expect(redisConf.Encode()).To(Equal(""))
+				It("does not return an error", func() {
+					Expect(redisConfErr).NotTo(HaveOccurred())
+				})
+
+				It("has length 1", func() {
+					Expect(redisConf).To(HaveLen(1))
+				})
+
+				It("contains the directive", func() {
+					expectedDirective := redisconf.Directive{"foo", redisconf.Args{"bar"}}
+					Expect(redisConf).To(ContainElement(expectedDirective))
+				})
+			})
+
+			Context("when given 3 directives", func() {
+				BeforeEach(func() {
+					redisConf, redisConfErr = redisconf.New(
+						redisconf.Directive{"foo", redisconf.Args{"bar"}},
+						redisconf.Directive{"bar", redisconf.Args{"baz"}},
+						redisconf.Directive{"baz", redisconf.Args{"boo", "baa"}},
+					)
+				})
+
+				It("does not return an error", func() {
+					Expect(redisConfErr).NotTo(HaveOccurred())
+				})
+
+				It("has length 3", func() {
+					Expect(redisConf).To(HaveLen(3))
+				})
+
+				It("contains the directives", func() {
+					Expect(redisConf).To(ContainElement(redisconf.Directive{"foo", redisconf.Args{"bar"}}))
+					Expect(redisConf).To(ContainElement(redisconf.Directive{"bar", redisconf.Args{"baz"}}))
+					Expect(redisConf).To(ContainElement(redisconf.Directive{"baz", redisconf.Args{"boo", "baa"}}))
+				})
+			})
+		})
+
+		Describe("Encode", func() {
+			BeforeEach(func() {
+				redisConf = newRedisConf()
+			})
+
+			It("returns an empty string", func() {
+				Expect(redisConf.Encode()).To(Equal(""))
+			})
+
+			Context("when the RedisConf is not empty", func() {
+				BeforeEach(func() {
+					redisConf = newRedisConf(
+						redisconf.Directive{"hello", redisconf.Args{"brother", "mine"}},
+						redisconf.Directive{"did", redisconf.Args{"you", "miss", "me"}},
+					)
+				})
+
+				It("returns newline separated Directives", func() {
+					Expect(redisConf.Encode()).To(Equal("hello brother mine\ndid you miss me\n"))
 				})
 			})
 		})
 
 		Describe("Append", func() {
-			var (
-				redisConf   RedisConf
-				appendError error
-			)
-
 			BeforeEach(func() {
-				redisConf = RedisConf{NewConf("hello", "brother", "mine")}
-				appendError = redisConf.Append(NewConf("hi", "mycroft"))
+				directive := newDirective("foo", "bar")
+				redisConf = newRedisConf()
+				redisConf = redisConf.Append(directive)
 			})
 
-			It("succeeds", func() {
-				Expect(appendError).NotTo(HaveOccurred())
-			})
-
-			It("appends the Conf", func() {
-				expectedConf := RedisConf{
-					NewConf("hello", "brother", "mine"),
-					NewConf("hi", "mycroft"),
-				}
+			It("appends the directive", func() {
+				expectedConf := newRedisConf(newDirective("foo", "bar"))
 				Expect(redisConf).To(Equal(expectedConf))
 			})
 		})

@@ -5,23 +5,31 @@ import (
 	"strings"
 )
 
-//Conf represents a single redis config, e.g. `save 900 1`
-type Conf struct {
+//Directive represents a single redis config, e.g. `save 900 1`
+type Directive struct {
 	Keyword string
 	Args    []string
 }
 
-//NewConf is the correct way to initialise a Conf
-func NewConf(keyword string, args ...string) Conf {
-	return Conf{Keyword: keyword, Args: args}
+//Args is a convenience alias for NewDirectives
+type Args []string
+
+//NewDirective is the correct way to initialise a RedisConf
+func NewDirective(keyword string, args ...string) (Directive, error) {
+	return Directive{Keyword: keyword, Args: args}, nil
 }
 
-func (conf Conf) String() string {
-	return fmt.Sprintf("%s %s", conf.Keyword, strings.Join(conf.Args, " "))
+func (d Directive) String() string {
+	return fmt.Sprintf("%s %s", d.Keyword, strings.Join(d.Args, " "))
 }
 
 //RedisConf represents a `redis.conf` file
-type RedisConf []Conf
+type RedisConf []Directive
+
+//New is the correct way to initialise a RedisConf
+func New(directives ...Directive) ([]Directive, error) {
+	return append([]Directive{}, directives...), nil
+}
 
 //Decode a `redis.conf` into a RedisConf
 func Decode(config string) RedisConf {
@@ -29,18 +37,19 @@ func Decode(config string) RedisConf {
 }
 
 //Encode a RedisConf to a `redis.conf`
-func (rc *RedisConf) Encode() (encoded string) {
-	for _, c := range *rc {
+func (redisConf RedisConf) Encode() (encoded string) {
+	for _, c := range redisConf {
 		encoded = encoded + fmt.Sprintln(c)
 	}
 	return
 }
 
 //Append a Conf to RedisConf
-func (rc *RedisConf) Append(confs ...Conf) error {
-	*rc = append(*rc, confs...)
-	return nil
+func (redisConf RedisConf) Append(directives ...Directive) RedisConf {
+	return append(redisConf, directives...)
 }
 
 //Remove a Config from RedisConf
-func (rc *RedisConf) Remove(keyword string, args ...string) {}
+func (redisConf RedisConf) Remove(keyword string, args ...string) RedisConf {
+	return redisConf
+}

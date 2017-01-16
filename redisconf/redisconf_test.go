@@ -104,11 +104,12 @@ var _ = Describe("redisconf", func() {
 
 			Context("when given 3 directives", func() {
 				BeforeEach(func() {
-					redisConf, redisConfErr = redisconf.New(
-						redisconf.Directive{"foo", redisconf.Args{"bar"}},
-						redisconf.Directive{"bar", redisconf.Args{"baz"}},
-						redisconf.Directive{"baz", redisconf.Args{"boo", "baa"}},
-					)
+					directives := []redisconf.Directive{
+						{"foo", redisconf.Args{"bar"}},
+						{"bar", redisconf.Args{"baz"}},
+						{"baz", redisconf.Args{"boo", "baa"}},
+					}
+					redisConf, redisConfErr = redisconf.New(directives...)
 				})
 
 				It("does not return an error", func() {
@@ -138,10 +139,11 @@ var _ = Describe("redisconf", func() {
 
 			Context("when the RedisConf is not empty", func() {
 				BeforeEach(func() {
-					redisConf = newRedisConf(
-						redisconf.Directive{"hello", redisconf.Args{"brother", "mine"}},
-						redisconf.Directive{"did", redisconf.Args{"you", "miss", "me"}},
-					)
+					directives := []redisconf.Directive{
+						{"hello", redisconf.Args{"brother", "mine"}},
+						{"did", redisconf.Args{"you", "miss", "me"}},
+					}
+					redisConf = newRedisConf(directives...)
 				})
 
 				It("returns newline separated Directives", func() {

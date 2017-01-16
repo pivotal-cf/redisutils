@@ -2,66 +2,37 @@ package redisconf
 
 import (
 	"fmt"
-	"os"
-
-	"github.com/BooleanCat/igo/iioutil"
+	"strings"
 )
 
-//RedisConf is a representation of a `redis.conf` file
-type RedisConf interface {
-	Get(string) string
-	Set(string, string)
-	GetRenameCommand(string) string
-	SetRenameCommand(string, string)
-	Save(string) error
-}
-
-//Conf is the implementation of RedisConf
 type Conf struct {
-	configs map[string]string
-
-	ioutil iioutil.Ioutil
+	Keyword string
+	Args    []string
 }
 
-//New is the correct way to initialise a RedisConf
-func New() *Conf {
-	return &Conf{
-		configs: map[string]string{
-			"host": "localhost",
-			"port": "6379",
-		},
-		ioutil: iioutil.New(),
-	}
+func (conf Conf) String() string {
+	return fmt.Sprintf("%s %s", conf.Keyword, strings.Join(conf.Args, " "))
 }
 
-//Get a redis config value
-func (c *Conf) Get(config string) string {
-	return c.configs[config]
+func NewConf(keyword string, args ...string) Conf {
+	return Conf{Keyword: keyword, Args: args}
 }
 
-//Set a redis config value
-func (c *Conf) Set(config, value string) {
-	c.configs[config] = value
+type RedisConf []Conf
+
+func Decode(config string) RedisConf {
+	return RedisConf{}
 }
 
-//GetRenameCommand a redis config value
-func (c *Conf) GetRenameCommand(string) string {
-	return ""
-}
-
-//SetRenameCommand a redis config value
-func (c *Conf) SetRenameCommand(string, string) {}
-
-//Save the config to disk
-func (c *Conf) Save(path string) error {
-	contents := c.encode()
-	return c.ioutil.WriteFile(path, []byte(contents), os.ModePerm)
-}
-
-func (c *Conf) encode() (contents string) {
-	for config, value := range c.configs {
-		line := fmt.Sprintf("%s %s", config, value)
-		contents = contents + line + "\n"
+func (rc *RedisConf) Encode() (encoded string) {
+	for _, c := range *rc {
+		encoded = encoded + fmt.Sprintln(c)
 	}
 	return
 }
+
+func (rc *RedisConf) Append(confs ...Conf) error {
+	return nil
+}
+
+func (rc *RedisConf) Remove(keyword string, args ...string) {}

@@ -9,18 +9,11 @@ import (
 
 var _ = Describe("redisconf", func() {
 	Describe("Directive", func() {
-		var (
-			directive    redisconf.Directive
-			directiveErr error
-		)
+		var directive redisconf.Directive
 
 		Describe("#NewDirective", func() {
 			BeforeEach(func() {
-				directive, directiveErr = redisconf.NewDirective("hello", "brother", "mine")
-			})
-
-			It("does not return an error", func() {
-				Expect(directiveErr).NotTo(HaveOccurred())
+				directive = redisconf.NewDirective("hello", "brother", "mine")
 			})
 
 			It("assigns Keyword correctly", func() {
@@ -34,11 +27,7 @@ var _ = Describe("redisconf", func() {
 
 			Context("when no Args are provided", func() {
 				BeforeEach(func() {
-					directive, directiveErr = redisconf.NewDirective("hello")
-				})
-
-				It("does not return an error", func() {
-					Expect(directiveErr).NotTo(HaveOccurred())
+					directive = redisconf.NewDirective("hello")
 				})
 
 				It("assigns Keyword correctly", func() {
@@ -53,7 +42,7 @@ var _ = Describe("redisconf", func() {
 
 		Describe("String", func() {
 			BeforeEach(func() {
-				directive = newDirective("hello", "brother", "mine")
+				directive = redisconf.NewDirective("hello", "brother", "mine")
 			})
 
 			It("converts to space separated string", func() {
@@ -63,74 +52,11 @@ var _ = Describe("redisconf", func() {
 	})
 
 	Describe("RedisConf", func() {
-		var (
-			redisConf    redisconf.RedisConf
-			redisConfErr error
-		)
-
-		Describe("#New", func() {
-			BeforeEach(func() {
-				redisConf, redisConfErr = redisconf.New()
-			})
-
-			It("does not return an error", func() {
-				Expect(redisConfErr).NotTo(HaveOccurred())
-			})
-
-			It("initialises empty", func() {
-				Expect(redisConf).To(HaveLen(0))
-			})
-
-			Context("when given a directive", func() {
-				BeforeEach(func() {
-					redisConf, redisConfErr = redisconf.New(
-						redisconf.Directive{"foo", redisconf.Args{"bar"}},
-					)
-				})
-
-				It("does not return an error", func() {
-					Expect(redisConfErr).NotTo(HaveOccurred())
-				})
-
-				It("has length 1", func() {
-					Expect(redisConf).To(HaveLen(1))
-				})
-
-				It("contains the directive", func() {
-					expectedDirective := redisconf.Directive{"foo", redisconf.Args{"bar"}}
-					Expect(redisConf).To(ContainElement(expectedDirective))
-				})
-			})
-
-			Context("when given 3 directives", func() {
-				BeforeEach(func() {
-					directives := []redisconf.Directive{
-						{"foo", redisconf.Args{"bar"}},
-						{"bar", redisconf.Args{"baz"}},
-						{"baz", redisconf.Args{"boo", "baa"}},
-					}
-					redisConf, redisConfErr = redisconf.New(directives...)
-				})
-
-				It("does not return an error", func() {
-					Expect(redisConfErr).NotTo(HaveOccurred())
-				})
-
-				It("has length 3", func() {
-					Expect(redisConf).To(HaveLen(3))
-				})
-
-				It("contains the directives", func() {
-					Expect(redisConf).To(ContainElement(redisconf.Directive{"foo", redisconf.Args{"bar"}}))
-					Expect(redisConf).To(ContainElement(redisconf.Directive{"bar", redisconf.Args{"baz"}}))
-					Expect(redisConf).To(ContainElement(redisconf.Directive{"baz", redisconf.Args{"boo", "baa"}}))
-				})
-			})
-		})
+		var redisConf redisconf.RedisConf
 
 		Describe("Encode", func() {
 			BeforeEach(func() {
-				redisConf = newRedisConf()
+				redisConf = redisconf.New()
 			})
 
 			It("returns an empty string", func() {
@@ -139,11 +65,10 @@ var _ = Describe("redisconf", func() {
 
 			Context("when the RedisConf is not empty", func() {
 				BeforeEach(func() {
-					directives := []redisconf.Directive{
+					redisConf = redisconf.RedisConf{
 						{"hello", redisconf.Args{"brother", "mine"}},
 						{"did", redisconf.Args{"you", "miss", "me"}},
 					}
-					redisConf = newRedisConf(directives...)
 				})
 
 				It("returns newline separated Directives", func() {
@@ -153,17 +78,28 @@ var _ = Describe("redisconf", func() {
 		})
 
 		Describe("Append", func() {
+			directive := redisconf.NewDirective("foo", "bar")
+
 			BeforeEach(func() {
-				directive := newDirective("foo", "bar")
-				redisConf = newRedisConf()
+				redisConf = redisconf.New()
 				redisConf = redisConf.Append(directive)
 			})
 
 			It("appends the directive", func() {
-				expectedConf := newRedisConf(newDirective("foo", "bar"))
+				expectedConf := redisconf.New(directive)
 				Expect(redisConf).To(Equal(expectedConf))
+			})
+
+			Context("when a directive already exists", func() {
+				BeforeEach(func() {
+					redisConf = redisConf.Append(directive)
+				})
+
+				It("does nothing", func() {
+					expectedConf := redisconf.New(directive)
+					Expect(redisConf).To(Equal(expectedConf))
+				})
 			})
 		})
 	})
-
 })

@@ -17,9 +17,6 @@ func NewDirective(keyword string, args ...string) Directive {
 	return Directive{Keyword: keyword, Args: args}
 }
 
-//Args is a convenience alias for initialising Directives
-type Args []string
-
 func (d Directive) String() string {
 	return fmt.Sprintf("%s %s", d.Keyword, strings.Join(d.Args, " "))
 }

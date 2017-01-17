@@ -65,10 +65,10 @@ var _ = Describe("redisconf", func() {
 
 			Context("when the RedisConf is not empty", func() {
 				BeforeEach(func() {
-					redisConf = redisconf.RedisConf{
-						{"hello", redisconf.Args{"brother", "mine"}},
-						{"did", redisconf.Args{"you", "miss", "me"}},
-					}
+					redisConf = redisconf.New(
+						redisconf.NewDirective("hello", "brother", "mine"),
+						redisconf.NewDirective("did", "you", "miss", "me"),
+					)
 				})
 
 				It("returns newline separated Directives", func() {

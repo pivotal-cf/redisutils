@@ -14,6 +14,24 @@ type StatusCmdFake struct {
 		result1 string
 		result2 error
 	}
+	ErrStub        func() error
+	errMutex       sync.RWMutex
+	errArgsForCall []struct{}
+	errReturns     struct {
+		result1 error
+	}
+	StringStub        func() string
+	stringMutex       sync.RWMutex
+	stringArgsForCall []struct{}
+	stringReturns     struct {
+		result1 string
+	}
+	ValStub        func() string
+	valMutex       sync.RWMutex
+	valArgsForCall []struct{}
+	valReturns     struct {
+		result1 string
+	}
 	invocations      map[string][][]interface{}
 	invocationsMutex sync.RWMutex
 }
@@ -51,12 +69,98 @@ func (fake *StatusCmdFake) ResultReturns(result1 string, result2 error) {
 	}{result1, result2}
 }
 
+//Err ...
+func (fake *StatusCmdFake) Err() error {
+	fake.errMutex.Lock()
+	fake.errArgsForCall = append(fake.errArgsForCall, struct{}{})
+	fake.recordInvocation("Err", []interface{}{})
+	fake.errMutex.Unlock()
+	if fake.ErrStub != nil {
+		return fake.ErrStub()
+	}
+	return fake.errReturns.result1
+}
+
+//ErrCallCount ...
+func (fake *StatusCmdFake) ErrCallCount() int {
+	fake.errMutex.RLock()
+	defer fake.errMutex.RUnlock()
+	return len(fake.errArgsForCall)
+}
+
+//ErrReturns ...
+func (fake *StatusCmdFake) ErrReturns(result1 error) {
+	fake.ErrStub = nil
+	fake.errReturns = struct {
+		result1 error
+	}{result1}
+}
+
+func (fake *StatusCmdFake) String() string {
+	fake.stringMutex.Lock()
+	fake.stringArgsForCall = append(fake.stringArgsForCall, struct{}{})
+	fake.recordInvocation("String", []interface{}{})
+	fake.stringMutex.Unlock()
+	if fake.StringStub != nil {
+		return fake.StringStub()
+	}
+	return fake.stringReturns.result1
+}
+
+//StringCallCount ...
+func (fake *StatusCmdFake) StringCallCount() int {
+	fake.stringMutex.RLock()
+	defer fake.stringMutex.RUnlock()
+	return len(fake.stringArgsForCall)
+}
+
+//StringReturns ...
+func (fake *StatusCmdFake) StringReturns(result1 string) {
+	fake.StringStub = nil
+	fake.stringReturns = struct {
+		result1 string
+	}{result1}
+}
+
+//Val ...
+func (fake *StatusCmdFake) Val() string {
+	fake.valMutex.Lock()
+	fake.valArgsForCall = append(fake.valArgsForCall, struct{}{})
+	fake.recordInvocation("Val", []interface{}{})
+	fake.valMutex.Unlock()
+	if fake.ValStub != nil {
+		return fake.ValStub()
+	}
+	return fake.valReturns.result1
+}
+
+//ValCallCount ...
+func (fake *StatusCmdFake) ValCallCount() int {
+	fake.valMutex.RLock()
+	defer fake.valMutex.RUnlock()
+	return len(fake.valArgsForCall)
+}
+
+//ValReturns ...
+func (fake *StatusCmdFake) ValReturns(result1 string) {
+	fake.ValStub = nil
+	fake.valReturns = struct {
+		result1 string
+	}{result1}
+}
+
 //Invocations ...
 func (fake *StatusCmdFake) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
 	fake.resultMutex.RLock()
 	defer fake.resultMutex.RUnlock()
+	fake.errMutex.RLock()
+	defer fake.errMutex.RUnlock()
+	fake.stringMutex.RLock()
+	defer fake.stringMutex.RUnlock()
+	fake.valMutex.RLock()
+	defer fake.valMutex.RUnlock()
 	return fake.invocations
 }
 

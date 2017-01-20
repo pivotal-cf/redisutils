@@ -33,6 +33,12 @@ type ClientFake struct {
 	infoReturns struct {
 		result1 StringCmd
 	}
+	ScriptKillStub        func() StatusCmd
+	scriptKillMutex       sync.RWMutex
+	scriptKillArgsForCall []struct{}
+	scriptKillReturns     struct {
+		result1 StatusCmd
+	}
 	invocations      map[string][][]interface{}
 	invocationsMutex sync.RWMutex
 }
@@ -159,6 +165,33 @@ func (fake *ClientFake) InfoReturns(result1 StringCmd) {
 	}{result1}
 }
 
+//ScriptKill ...
+func (fake *ClientFake) ScriptKill() StatusCmd {
+	fake.scriptKillMutex.Lock()
+	fake.scriptKillArgsForCall = append(fake.scriptKillArgsForCall, struct{}{})
+	fake.recordInvocation("ScriptKill", []interface{}{})
+	fake.scriptKillMutex.Unlock()
+	if fake.ScriptKillStub != nil {
+		return fake.ScriptKillStub()
+	}
+	return fake.scriptKillReturns.result1
+}
+
+//ScriptKillCallCount ...
+func (fake *ClientFake) ScriptKillCallCount() int {
+	fake.scriptKillMutex.RLock()
+	defer fake.scriptKillMutex.RUnlock()
+	return len(fake.scriptKillArgsForCall)
+}
+
+//ScriptKillReturns ...
+func (fake *ClientFake) ScriptKillReturns(result1 StatusCmd) {
+	fake.ScriptKillStub = nil
+	fake.scriptKillReturns = struct {
+		result1 StatusCmd
+	}{result1}
+}
+
 //Invocations ...
 func (fake *ClientFake) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
@@ -171,6 +204,8 @@ func (fake *ClientFake) Invocations() map[string][][]interface{} {
 	defer fake.bgRewriteAOFMutex.RUnlock()
 	fake.infoMutex.RLock()
 	defer fake.infoMutex.RUnlock()
+	fake.scriptKillMutex.RLock()
+	defer fake.scriptKillMutex.RUnlock()
 	return fake.invocations
 }
 

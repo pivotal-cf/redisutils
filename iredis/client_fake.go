@@ -37,7 +37,7 @@ type ClientFake struct {
 	invocationsMutex sync.RWMutex
 }
 
-//NewClientFake is the preferred way to initialise a Fake
+//NewClientFake is the preferred way to initialise a ClientFake
 func NewClientFake() *ClientFake {
 	return new(ClientFake)
 }

@@ -56,4 +56,14 @@ var _ = Describe("interfaces", func() {
 			var _ iredis.BoolSliceCmd = iredis.NewBoolSliceCmdFake()
 		})
 	})
+
+	Describe("Script", func() {
+		It("is implemented by iredis.ScriptReal", func() {
+			var _ iredis.Script = new(iredis.ScriptReal)
+		})
+
+		It("is implemented by iredis.ScriptFake", func() {
+			var _ iredis.Script = iredis.NewScriptFake()
+		})
+	})
 })

@@ -11,46 +11,46 @@ import (
 
 //ScriptFake ...
 type ScriptFake struct {
-	EvalStub        func(scripter, []string, ...interface{}) *redis.Cmd
+	EvalStub        func(Scripter, []string, ...interface{}) *redis.Cmd
 	evalMutex       sync.RWMutex
 	evalArgsForCall []struct {
-		arg1 scripter
+		arg1 Scripter
 		arg2 []string
 		arg3 []interface{}
 	}
 	evalReturns struct {
 		result1 *redis.Cmd
 	}
-	EvalShaStub        func(scripter, []string, ...interface{}) *redis.Cmd
+	EvalShaStub        func(Scripter, []string, ...interface{}) *redis.Cmd
 	evalShaMutex       sync.RWMutex
 	evalShaArgsForCall []struct {
-		arg1 scripter
+		arg1 Scripter
 		arg2 []string
 		arg3 []interface{}
 	}
 	evalShaReturns struct {
 		result1 *redis.Cmd
 	}
-	ExistsStub        func(scripter) BoolSliceCmd
+	ExistsStub        func(Scripter) BoolSliceCmd
 	existsMutex       sync.RWMutex
 	existsArgsForCall []struct {
-		arg1 scripter
+		arg1 Scripter
 	}
 	existsReturns struct {
 		result1 BoolSliceCmd
 	}
-	LoadStub        func(scripter) StringCmd
+	LoadStub        func(Scripter) StringCmd
 	loadMutex       sync.RWMutex
 	loadArgsForCall []struct {
-		arg1 scripter
+		arg1 Scripter
 	}
 	loadReturns struct {
 		result1 StringCmd
 	}
-	RunStub        func(scripter, []string, ...interface{}) *redis.Cmd
+	RunStub        func(Scripter, []string, ...interface{}) *redis.Cmd
 	runMutex       sync.RWMutex
 	runArgsForCall []struct {
-		arg1 scripter
+		arg1 Scripter
 		arg2 []string
 		arg3 []interface{}
 	}
@@ -62,7 +62,7 @@ type ScriptFake struct {
 }
 
 //Eval ...
-func (fake *ScriptFake) Eval(arg1 scripter, arg2 []string, arg3 ...interface{}) *redis.Cmd {
+func (fake *ScriptFake) Eval(arg1 Scripter, arg2 []string, arg3 ...interface{}) *redis.Cmd {
 	var arg2Copy []string
 	if arg2 != nil {
 		arg2Copy = make([]string, len(arg2))
@@ -70,7 +70,7 @@ func (fake *ScriptFake) Eval(arg1 scripter, arg2 []string, arg3 ...interface{}) 
 	}
 	fake.evalMutex.Lock()
 	fake.evalArgsForCall = append(fake.evalArgsForCall, struct {
-		arg1 scripter
+		arg1 Scripter
 		arg2 []string
 		arg3 []interface{}
 	}{arg1, arg2Copy, arg3})
@@ -95,7 +95,7 @@ func (fake *ScriptFake) EvalCallCount() int {
 }
 
 //EvalArgsForCall ...
-func (fake *ScriptFake) EvalArgsForCall(i int) (scripter, []string, []interface{}) {
+func (fake *ScriptFake) EvalArgsForCall(i int) (Scripter, []string, []interface{}) {
 	fake.evalMutex.RLock()
 	defer fake.evalMutex.RUnlock()
 	return fake.evalArgsForCall[i].arg1, fake.evalArgsForCall[i].arg2, fake.evalArgsForCall[i].arg3
@@ -110,7 +110,7 @@ func (fake *ScriptFake) EvalReturns(result1 *redis.Cmd) {
 }
 
 //EvalSha ...
-func (fake *ScriptFake) EvalSha(arg1 scripter, arg2 []string, arg3 ...interface{}) *redis.Cmd {
+func (fake *ScriptFake) EvalSha(arg1 Scripter, arg2 []string, arg3 ...interface{}) *redis.Cmd {
 	var arg2Copy []string
 	if arg2 != nil {
 		arg2Copy = make([]string, len(arg2))
@@ -118,7 +118,7 @@ func (fake *ScriptFake) EvalSha(arg1 scripter, arg2 []string, arg3 ...interface{
 	}
 	fake.evalShaMutex.Lock()
 	fake.evalShaArgsForCall = append(fake.evalShaArgsForCall, struct {
-		arg1 scripter
+		arg1 Scripter
 		arg2 []string
 		arg3 []interface{}
 	}{arg1, arg2Copy, arg3})
@@ -138,7 +138,7 @@ func (fake *ScriptFake) EvalShaCallCount() int {
 }
 
 //EvalShaArgsForCall ...
-func (fake *ScriptFake) EvalShaArgsForCall(i int) (scripter, []string, []interface{}) {
+func (fake *ScriptFake) EvalShaArgsForCall(i int) (Scripter, []string, []interface{}) {
 	fake.evalShaMutex.RLock()
 	defer fake.evalShaMutex.RUnlock()
 	return fake.evalShaArgsForCall[i].arg1, fake.evalShaArgsForCall[i].arg2, fake.evalShaArgsForCall[i].arg3
@@ -153,10 +153,10 @@ func (fake *ScriptFake) EvalShaReturns(result1 *redis.Cmd) {
 }
 
 //Exists ...
-func (fake *ScriptFake) Exists(arg1 scripter) BoolSliceCmd {
+func (fake *ScriptFake) Exists(arg1 Scripter) BoolSliceCmd {
 	fake.existsMutex.Lock()
 	fake.existsArgsForCall = append(fake.existsArgsForCall, struct {
-		arg1 scripter
+		arg1 Scripter
 	}{arg1})
 	fake.recordInvocation("Exists", []interface{}{arg1})
 	fake.existsMutex.Unlock()
@@ -174,7 +174,7 @@ func (fake *ScriptFake) ExistsCallCount() int {
 }
 
 //ExistsArgsForCall ...
-func (fake *ScriptFake) ExistsArgsForCall(i int) scripter {
+func (fake *ScriptFake) ExistsArgsForCall(i int) Scripter {
 	fake.existsMutex.RLock()
 	defer fake.existsMutex.RUnlock()
 	return fake.existsArgsForCall[i].arg1
@@ -189,10 +189,10 @@ func (fake *ScriptFake) ExistsReturns(result1 BoolSliceCmd) {
 }
 
 //Load ...
-func (fake *ScriptFake) Load(arg1 scripter) StringCmd {
+func (fake *ScriptFake) Load(arg1 Scripter) StringCmd {
 	fake.loadMutex.Lock()
 	fake.loadArgsForCall = append(fake.loadArgsForCall, struct {
-		arg1 scripter
+		arg1 Scripter
 	}{arg1})
 	fake.recordInvocation("Load", []interface{}{arg1})
 	fake.loadMutex.Unlock()
@@ -210,7 +210,7 @@ func (fake *ScriptFake) LoadCallCount() int {
 }
 
 //LoadArgsForCall ...
-func (fake *ScriptFake) LoadArgsForCall(i int) scripter {
+func (fake *ScriptFake) LoadArgsForCall(i int) Scripter {
 	fake.loadMutex.RLock()
 	defer fake.loadMutex.RUnlock()
 	return fake.loadArgsForCall[i].arg1
@@ -225,7 +225,7 @@ func (fake *ScriptFake) LoadReturns(result1 StringCmd) {
 }
 
 //Run ...
-func (fake *ScriptFake) Run(arg1 scripter, arg2 []string, arg3 ...interface{}) *redis.Cmd {
+func (fake *ScriptFake) Run(arg1 Scripter, arg2 []string, arg3 ...interface{}) *redis.Cmd {
 	var arg2Copy []string
 	if arg2 != nil {
 		arg2Copy = make([]string, len(arg2))
@@ -233,7 +233,7 @@ func (fake *ScriptFake) Run(arg1 scripter, arg2 []string, arg3 ...interface{}) *
 	}
 	fake.runMutex.Lock()
 	fake.runArgsForCall = append(fake.runArgsForCall, struct {
-		arg1 scripter
+		arg1 Scripter
 		arg2 []string
 		arg3 []interface{}
 	}{arg1, arg2Copy, arg3})
@@ -253,7 +253,7 @@ func (fake *ScriptFake) RunCallCount() int {
 }
 
 //RunArgsForCall ...
-func (fake *ScriptFake) RunArgsForCall(i int) (scripter, []string, []interface{}) {
+func (fake *ScriptFake) RunArgsForCall(i int) (Scripter, []string, []interface{}) {
 	fake.runMutex.RLock()
 	defer fake.runMutex.RUnlock()
 	return fake.runArgsForCall[i].arg1, fake.runArgsForCall[i].arg2, fake.runArgsForCall[i].arg3

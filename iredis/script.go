@@ -2,7 +2,8 @@ package iredis
 
 import redis "gopkg.in/redis.v5"
 
-type scripter interface {
+//Scripter ...
+type Scripter interface {
 	Eval(script string, keys []string, args ...interface{}) *redis.Cmd
 	EvalSha(sha1 string, keys []string, args ...interface{}) *redis.Cmd
 	ScriptExists(scripts ...string) *redis.BoolSliceCmd
@@ -11,11 +12,11 @@ type scripter interface {
 
 //Script is an interface around redis.Script
 type Script interface {
-	Eval(scripter, []string, ...interface{}) *redis.Cmd
-	EvalSha(scripter, []string, ...interface{}) *redis.Cmd
-	Exists(scripter) BoolSliceCmd
-	Load(scripter) StringCmd
-	Run(scripter, []string, ...interface{}) *redis.Cmd
+	Eval(Scripter, []string, ...interface{}) *redis.Cmd
+	EvalSha(Scripter, []string, ...interface{}) *redis.Cmd
+	Exists(Scripter) BoolSliceCmd
+	Load(Scripter) StringCmd
+	Run(Scripter, []string, ...interface{}) *redis.Cmd
 }
 
 //ScriptReal is a wrapper around redis that implements iredis.Script
@@ -29,26 +30,26 @@ func (*Real) NewScript(src string) Script {
 }
 
 //Eval is a wrapper around redis.Script.Eval()
-func (s *ScriptReal) Eval(c scripter, keys []string, args ...interface{}) *redis.Cmd {
+func (s *ScriptReal) Eval(c Scripter, keys []string, args ...interface{}) *redis.Cmd {
 	return s.script.Eval(c, keys, args...)
 }
 
 //EvalSha is a wrapper around redis.Script.EvalSha()
-func (s *ScriptReal) EvalSha(c scripter, keys []string, args ...interface{}) *redis.Cmd {
+func (s *ScriptReal) EvalSha(c Scripter, keys []string, args ...interface{}) *redis.Cmd {
 	return s.script.EvalSha(c, keys, args...)
 }
 
 //Exists is a wrapper around redis.Script.Exists()
-func (s *ScriptReal) Exists(c scripter) BoolSliceCmd {
+func (s *ScriptReal) Exists(c Scripter) BoolSliceCmd {
 	return &BoolSliceCmdReal{boolSliceCmd: s.script.Exists(c)}
 }
 
 //Load is a wrapper around redis.Script.Load()
-func (s *ScriptReal) Load(c scripter) StringCmd {
+func (s *ScriptReal) Load(c Scripter) StringCmd {
 	return &StringCmdReal{stringCmd: s.script.Load(c)}
 }
 
 //Run is a wrapper around redis.Script.Run()
-func (s *ScriptReal) Run(c scripter, keys []string, args ...interface{}) *redis.Cmd {
+func (s *ScriptReal) Run(c Scripter, keys []string, args ...interface{}) *redis.Cmd {
 	return s.script.Run(c, keys, args...)
 }

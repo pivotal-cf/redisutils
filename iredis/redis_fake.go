@@ -6,18 +6,26 @@ package iredis
 import (
 	"sync"
 
-	redis_v5 "gopkg.in/redis.v5"
+	redis "gopkg.in/redis.v5"
 )
 
 //Fake ...
 type Fake struct {
-	NewClientStub        func(*redis_v5.Options) Client
+	NewClientStub        func(*redis.Options) Client
 	newClientMutex       sync.RWMutex
 	newClientArgsForCall []struct {
-		arg1 *redis_v5.Options
+		arg1 *redis.Options
 	}
 	newClientReturns struct {
 		result1 Client
+	}
+	NewScriptStub        func(src string) Script
+	newScriptMutex       sync.RWMutex
+	newScriptArgsForCall []struct {
+		src string
+	}
+	newScriptReturns struct {
+		result1 Script
 	}
 	invocations      map[string][][]interface{}
 	invocationsMutex sync.RWMutex
@@ -29,10 +37,10 @@ func NewFake() *Fake {
 }
 
 //NewClient ...
-func (fake *Fake) NewClient(arg1 *redis_v5.Options) Client {
+func (fake *Fake) NewClient(arg1 *redis.Options) Client {
 	fake.newClientMutex.Lock()
 	fake.newClientArgsForCall = append(fake.newClientArgsForCall, struct {
-		arg1 *redis_v5.Options
+		arg1 *redis.Options
 	}{arg1})
 	fake.recordInvocation("NewClient", []interface{}{arg1})
 	fake.newClientMutex.Unlock()
@@ -50,7 +58,7 @@ func (fake *Fake) NewClientCallCount() int {
 }
 
 //NewClientArgsForCall ...
-func (fake *Fake) NewClientArgsForCall(i int) *redis_v5.Options {
+func (fake *Fake) NewClientArgsForCall(i int) *redis.Options {
 	fake.newClientMutex.RLock()
 	defer fake.newClientMutex.RUnlock()
 	return fake.newClientArgsForCall[i].arg1
@@ -64,12 +72,50 @@ func (fake *Fake) NewClientReturns(result1 Client) {
 	}{result1}
 }
 
+//NewScript ...
+func (fake *Fake) NewScript(src string) Script {
+	fake.newScriptMutex.Lock()
+	fake.newScriptArgsForCall = append(fake.newScriptArgsForCall, struct {
+		src string
+	}{src})
+	fake.recordInvocation("NewScript", []interface{}{src})
+	fake.newScriptMutex.Unlock()
+	if fake.NewScriptStub != nil {
+		return fake.NewScriptStub(src)
+	}
+	return fake.newScriptReturns.result1
+}
+
+//NewScriptCallCount ...
+func (fake *Fake) NewScriptCallCount() int {
+	fake.newScriptMutex.RLock()
+	defer fake.newScriptMutex.RUnlock()
+	return len(fake.newScriptArgsForCall)
+}
+
+//NewScriptArgsForCall ...
+func (fake *Fake) NewScriptArgsForCall(i int) string {
+	fake.newScriptMutex.RLock()
+	defer fake.newScriptMutex.RUnlock()
+	return fake.newScriptArgsForCall[i].src
+}
+
+//NewScriptReturns ...
+func (fake *Fake) NewScriptReturns(result1 Script) {
+	fake.NewScriptStub = nil
+	fake.newScriptReturns = struct {
+		result1 Script
+	}{result1}
+}
+
 //Invocations ...
 func (fake *Fake) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
 	fake.newClientMutex.RLock()
 	defer fake.newClientMutex.RUnlock()
+	fake.newScriptMutex.RLock()
+	defer fake.newScriptMutex.RUnlock()
 	return fake.invocations
 }
 

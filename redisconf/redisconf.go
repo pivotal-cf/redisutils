@@ -11,38 +11,6 @@ type Directive interface {
 //RedisConf is a representation of `redis.conf`
 type RedisConf []Directive
 
-//Config is a config value for a `redis.conf`
-type Config struct {
-	Name  string
-	Value string
-}
-
-//NewConfig is a conventient way to initialise a Config
-func NewConfig(name, value string) Config {
-	return Config{Name: name, Value: value}
-}
-
-func (config Config) String() string {
-	return fmt.Sprintf("%s %s", config.Name, config.Value)
-}
-
-//Validate returns an error if it considered invalid by Redis
-func (config Config) Validate() error {
-	if !config.hasKnownConfigName() {
-		return fmt.Errorf("unknown config: %s", config.Name)
-	}
-	return nil
-}
-
-func (config Config) hasKnownConfigName() bool {
-	for _, validConfig := range validConfigs {
-		if config.Name == validConfig {
-			return true
-		}
-	}
-	return false
-}
-
 //RenameCommand is a command alias for a Redis command
 type RenameCommand struct {
 	Command string
@@ -68,8 +36,4 @@ func (rename RenameCommand) aliasString() string {
 		return `""`
 	}
 	return rename.Alias
-}
-
-var validConfigs = []string{
-	"save",
 }

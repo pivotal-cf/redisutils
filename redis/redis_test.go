@@ -1,0 +1,26 @@
+package redis_test
+
+import (
+	redigo "github.com/garyburd/redigo/redis"
+	. "github.com/onsi/ginkgo"
+
+	"github.com/pivotal-cf/redisutils/redis"
+)
+
+var _ = Describe("interfaces", func() {
+	Describe("Redis", func() {
+		It("is implemented by redis.Real", func() {
+			var _ redis.Redis = redis.New()
+		})
+
+		It("is implemented by redis.Fake", func() {
+			var _ redis.Redis = redis.NewFake()
+		})
+	})
+
+	Describe("Conn", func() {
+		It("is implemented by redis.ConnFake", func() {
+			var _ redigo.Conn = redis.NewConnFake()
+		})
+	})
+})

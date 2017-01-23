@@ -11,29 +11,28 @@ type Directive interface {
 //RedisConf is a representation of `redis.conf`
 type RedisConf []Directive
 
-//RenameCommand is a command alias for a Redis command
-type RenameCommand struct {
-	Command string
-	Alias   string
+//New initialises a RedisConf from Directives and validates each
+func New(directives ...Directive) (redisConf RedisConf, err error) {
+	err = validateDirectives(directives...)
+	if err == nil {
+		redisConf = append(RedisConf{}, directives...)
+	}
+	return
 }
 
-//NewRenameCommand is a conventient way to initialise a RenameCommand
-func NewRenameCommand(command, alias string) RenameCommand {
-	return RenameCommand{Command: command, Alias: alias}
-}
-
-func (rename RenameCommand) String() string {
-	return fmt.Sprintf("rename-command %s %s", rename.Command, rename.aliasString())
-}
-
-//Validate returns an error if it considered invalid by Redis
-func (rename RenameCommand) Validate() error {
+func validateDirectives(directives ...Directive) error {
+	for _, directive := range directives {
+		err := directive.Validate()
+		if err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
-func (rename RenameCommand) aliasString() string {
-	if rename.Alias == "" {
-		return `""`
+func (conf RedisConf) String() (confString string) {
+	for _, directive := range conf {
+		confString = confString + fmt.Sprintln(directive)
 	}
-	return rename.Alias
+	return
 }

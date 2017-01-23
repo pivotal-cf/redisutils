@@ -1,4 +1,4 @@
-package redisconf_test
+package redisconf
 
 import (
 	"testing"

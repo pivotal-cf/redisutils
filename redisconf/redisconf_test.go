@@ -15,7 +15,7 @@ var _ = Describe("redisconf", func() {
 		})
 
 		Context("when given an invalid directive", func() {
-			validateErr := errors.New("unknown config: foo")
+			validateErr := errors.New("unknown config: `foo`")
 
 			It("returns an error", func() {
 				_, err := New(NewConfig("foo", "bar"))

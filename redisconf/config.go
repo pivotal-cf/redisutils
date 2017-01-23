@@ -1,6 +1,9 @@
 package redisconf
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 //Config is a config value for a `redis.conf`
 type Config struct {
@@ -20,9 +23,33 @@ func (config Config) String() string {
 //Validate returns an error if it considered invalid by Redis
 func (config Config) Validate() error {
 	if !config.hasKnownConfigName() {
-		return fmt.Errorf("unknown config: %s", config.Name)
+		return fmt.Errorf("unknown config: `%s`", config.Name)
 	}
 	return nil
+}
+
+//DecodeConfig attempts to initialise a config from a raw `redis.conf` line
+func DecodeConfig(rawDirective string) (Config, error) {
+	config := fromRawDirective(rawDirective)
+
+	if err := config.Validate(); err != nil {
+		return Config{}, err
+	}
+
+	return config, nil
+}
+
+func fromRawDirective(rawDirective string) Config {
+	words := strings.SplitN(strings.TrimSpace(rawDirective), " ", 2)
+
+	switch len(words) {
+	case 0:
+		return Config{"", ""}
+	case 1:
+		return Config{words[0], ""}
+	default:
+		return Config{words[0], words[1]}
+	}
 }
 
 func (config Config) hasKnownConfigName() bool {

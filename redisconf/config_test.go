@@ -28,12 +28,42 @@ var _ = Describe("redisconf", func() {
 			})
 
 			Context("when Name is not a valid config", func() {
-				validateErr := errors.New("unknown config: foo")
+				validateErr := errors.New("unknown config: `foo`")
 
 				It("returns an error", func() {
 					directive := NewConfig("foo", "bar")
 					err := directive.Validate()
 					Expect(err).To(MatchError(validateErr))
+				})
+			})
+		})
+
+		Describe("#DecodeConfig", func() {
+			It("does not return an error", func() {
+				_, err := DecodeConfig("save 600 1")
+				Expect(err).NotTo(HaveOccurred())
+			})
+
+			It("decodes the config", func() {
+				config, _ := DecodeConfig("save 600 1")
+				Expect(config).To(Equal(NewConfig("save", "600 1")))
+			})
+
+			Context("when config is not valid", func() {
+				configErr := errors.New("unknown config: `foo`")
+
+				It("returns an error", func() {
+					_, err := DecodeConfig("foo bar")
+					Expect(err).To(MatchError(configErr))
+				})
+			})
+
+			Context("the the line is blank", func() {
+				decodeErr := errors.New("unknown config: ``")
+
+				It("returns an error", func() {
+					_, err := DecodeConfig("\n")
+					Expect(err).To(MatchError(decodeErr))
 				})
 			})
 		})

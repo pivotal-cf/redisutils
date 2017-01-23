@@ -5,7 +5,7 @@ import "fmt"
 //Directive describes the methods for `redis.conf` directives
 type Directive interface {
 	String() string
-	IsValid() error
+	Validate() error
 }
 
 //RedisConf is a representation of `redis.conf`
@@ -26,9 +26,21 @@ func (config Config) String() string {
 	return fmt.Sprintf("%s %s", config.Name, config.Value)
 }
 
-//IsValid returns an error if it considered invalid by Redis
-func (config Config) IsValid() error {
+//Validate returns an error if it considered invalid by Redis
+func (config Config) Validate() error {
+	if !config.hasKnownConfigName() {
+		return fmt.Errorf("unknown config: %s", config.Name)
+	}
 	return nil
+}
+
+func (config Config) hasKnownConfigName() bool {
+	for _, validConfig := range validConfigs {
+		if config.Name == validConfig {
+			return true
+		}
+	}
+	return false
 }
 
 //RenameCommand is a command alias for a Redis command
@@ -46,8 +58,8 @@ func (rename RenameCommand) String() string {
 	return fmt.Sprintf("rename-command %s %s", rename.Command, rename.aliasString())
 }
 
-//IsValid returns an error if it considered invalid by Redis
-func (rename RenameCommand) IsValid() error {
+//Validate returns an error if it considered invalid by Redis
+func (rename RenameCommand) Validate() error {
 	return nil
 }
 
@@ -56,4 +68,8 @@ func (rename RenameCommand) aliasString() string {
 		return `""`
 	}
 	return rename.Alias
+}
+
+var validConfigs = []string{
+	"save",
 }

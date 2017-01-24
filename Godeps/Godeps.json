@@ -1,7 +1,7 @@
 {
 	"ImportPath": "github.com/pivotal-cf/redisutils",
 	"GoVersion": "go1.7",
-	"GodepVersion": "v73",
+	"GodepVersion": "v78",
 	"Packages": [
 		"./..."
 	],

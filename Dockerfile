@@ -1,7 +1,12 @@
 FROM ubuntu:trusty
 
-RUN apt-get update
-RUN apt-get install -y wget gcc make flex bison git vim
+RUN \
+  apt-get update && \
+  apt-get install -y \
+    wget gcc make flex bison git vim openssh-server
+
+# allow SSH connections to container
+EXPOSE 22
 
 # redis installation
 RUN wget http://download.redis.io/releases/redis-3.2.6.tar.gz

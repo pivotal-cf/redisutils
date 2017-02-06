@@ -11,6 +11,7 @@ RUN rm -r redis-3.2.6 redis-3.2.6.tar.gz
 
 # vcap user creation
 RUN useradd -ms /bin/bash vcap
+RUN echo vcap:vcap | chpasswd
 ENV VCAP_HOME /home/vcap
 WORKDIR $VCAP_HOME
 RUN mkdir $VCAP_HOME/bin

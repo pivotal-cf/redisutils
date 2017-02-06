@@ -41,7 +41,7 @@ var _ = Describe("tunnel", func() {
 		conn, err := redis.Dial("tcp", "localhost:8005")
 		Expect(err).NotTo(HaveOccurred())
 		defer conn.Close()
-		reply, err := conn.Do("bgsave")
+		reply, err := conn.Do("ping")
 		Expect(err).NotTo(HaveOccurred())
 		Expect(reply).To(Equal("PONG"))
 	})

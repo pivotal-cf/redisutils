@@ -16,7 +16,7 @@ function export_test_env_vars {
 
 function run_tests {
   pushd $ROOT/tunnel > /dev/null
-    ginkgo -v .
+    ginkgo -v --race .
   popd > /dev/null
 }
 

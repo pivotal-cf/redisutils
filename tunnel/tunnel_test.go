@@ -1,11 +1,10 @@
 package tunnel
 
 import (
-	"golang.org/x/crypto/ssh"
-
 	"github.com/garyburd/redigo/redis"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"golang.org/x/crypto/ssh"
 )
 
 var _ = Describe("tunnel", func() {
@@ -20,21 +19,17 @@ var _ = Describe("tunnel", func() {
 		// Run this test
 
 		// TODO
-		// Have the docker image always start the ssh-server on start up
-		// Have the test suite create and destroy the network
-		// Have the test suite launch both docker containers
-		// Have the test suite kill both docker containers
 		// Make this work in concourse (docker inside docker so you can docker your docker)
 
 		local := Endpoint{Host: "localhost", Port: 8005}
-		server := Endpoint{Host: "localhost", Port: 8001}
-		remote := Endpoint{Host: "172.18.0.3", Port: 6379}
+		server := Endpoint{Host: sshHost, Port: sshPort}
+		remote := Endpoint{Host: redisHost, Port: redisPort}
 
 		tunnel := &SSHTunnel{
 			Local:  local,
 			Server: server,
 			Remote: remote,
-			Config: &ssh.ClientConfig{User: "vcap", Auth: []ssh.AuthMethod{ssh.Password("vcap")}},
+			Config: &ssh.ClientConfig{User: "vcap", Auth: []ssh.AuthMethod{ssh.Password("funky92horse")}},
 		}
 
 		go tunnel.Start()

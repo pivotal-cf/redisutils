@@ -62,22 +62,29 @@ function ssh_server {
   esac
 }
 
+function export_test_env_vars {
+  export REDIS_HOST=$( docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' redis-server )
+  export REDIS_PORT="6379"
+  SSH_ADDRESS=$( docker port ssh-server 22 )
+  IFS=: read SSH_HOST SSH_PORT <<< "${SSH_ADDRESS}"
+  export SSH_HOST=${SSH_HOST}
+  export SSH_PORT=${SSH_PORT}
+  export SSH_USER="vcap"
+  export SSH_PASSWORD="funky92horse"
+}
+
+function run_tests {
+  pushd $ROOT/tunnel > /dev/null
+    ginkgo -v .
+  popd > /dev/null
+}
+
 network_bastion create
 redis_server    create
 ssh_server      create
 
-export REDIS_HOST=$( docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' redis-server )
-export REDIS_PORT="6379"
-SSH_ADDRESS=$( docker port ssh-server 22 )
-IFS=: read SSH_HOST SSH_PORT <<< "${SSH_ADDRESS}"
-export SSH_HOST=${SSH_HOST}
-export SSH_PORT=${SSH_PORT}
-export SSH_USER="vcap"
-export SSH_PASSWORD="funky92horse"
-
-pushd $ROOT/tunnel > /dev/null
-  ginkgo -v .
-popd > /dev/null
+export_test_env_vars
+run_tests
 
 redis_server    destroy
 ssh_server      destroy

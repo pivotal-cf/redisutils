@@ -12,11 +12,7 @@ var _ = Describe("tunnel", func() {
 		// SPIKE AHEAD
 		// This is a spike to test pinging a Redis instance behind a bastion
 		// local machine --- tcp ---> local server --- ssh ---> bastion host --- tcp ---> redis
-		// Create a bridge network to hold these containers: `docker network create --driver bridge test-go-forth`
-		// In order to run the baston host: `docker run -i --network=test-go-forth -p 8001:22/tcp --user root -t cflondonservices/redisutils`
-		// Start the ssh server on the bastion: `/etc/init.d/ssh start`
-		// In order to run the redis host: `docker run -i --network=test-go-forth  --expose 6379 -t cflondonservices/redisutils`
-		// Run this test
+		// Run tunnel/scripts/test.sh
 
 		// TODO
 		// Make this work in concourse (docker inside docker so you can docker your docker)

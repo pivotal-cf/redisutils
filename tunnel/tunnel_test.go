@@ -29,7 +29,10 @@ var _ = Describe("tunnel", func() {
 			Local:  local,
 			Server: server,
 			Remote: remote,
-			Config: &ssh.ClientConfig{User: "vcap", Auth: []ssh.AuthMethod{ssh.Password("funky92horse")}},
+			Config: &ssh.ClientConfig{
+				User: sshUser,
+				Auth: []ssh.AuthMethod{ssh.Password(sshPassword)},
+			},
 		}
 
 		go tunnel.Start()

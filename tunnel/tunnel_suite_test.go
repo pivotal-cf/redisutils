@@ -10,10 +10,12 @@ import (
 )
 
 var (
-	redisHost string
-	redisPort int
-	sshHost   string
-	sshPort   int
+	redisHost   string
+	redisPort   int
+	sshHost     string
+	sshPort     int
+	sshUser     string
+	sshPassword string
 )
 
 func TestTunnel(t *testing.T) {
@@ -26,6 +28,8 @@ var _ = BeforeSuite(func() {
 	redisPort = mustGetenvInt("REDIS_PORT")
 	sshHost = mustGetenv("SSH_HOST")
 	sshPort = mustGetenvInt("SSH_PORT")
+	sshUser = mustGetenv("SSH_USER")
+	sshPassword = mustGetenv("SSH_PASSWORD")
 })
 
 func mustGetenv(env string) string {

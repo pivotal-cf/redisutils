@@ -72,6 +72,8 @@ SSH_ADDRESS=$( docker port ssh-server 22 )
 IFS=: read SSH_HOST SSH_PORT <<< "${SSH_ADDRESS}"
 export SSH_HOST=${SSH_HOST}
 export SSH_PORT=${SSH_PORT}
+export SSH_USER="vcap"
+export SSH_PASSWORD="funky92horse"
 
 pushd $ROOT/tunnel > /dev/null
   ginkgo -v .

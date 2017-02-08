@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"net"
+	"sync"
 
 	"golang.org/x/crypto/ssh"
 )
@@ -24,23 +25,52 @@ type SSHTunnel struct {
 	Server Endpoint
 	Remote Endpoint
 	Config *ssh.ClientConfig
+
+	err     error
+	errLock *sync.Mutex
+}
+
+//New is the correct way to initialise a SSHTunnel
+func New(local, server, remote Endpoint, config *ssh.ClientConfig) *SSHTunnel {
+	return &SSHTunnel{
+		Local:   local,
+		Server:  server,
+		Remote:  remote,
+		Config:  config,
+		errLock: new(sync.Mutex),
+	}
 }
 
 //Start tunneling through Server to Remote
-func (tunnel *SSHTunnel) Start() error {
+func (tunnel *SSHTunnel) Start() {
 	listener, err := net.Listen("tcp", tunnel.Local.String())
 	if err != nil {
-		return err
+		tunnel.setErr(err)
+		return
 	}
 	defer listener.Close()
 
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
-			return err
+			tunnel.setErr(err)
+			return
 		}
 		go tunnel.forward(conn)
 	}
+}
+
+//GetErr gets the error if one has occurred within Start
+func (tunnel *SSHTunnel) GetErr() error {
+	tunnel.errLock.Lock()
+	defer tunnel.errLock.Unlock()
+	return nil
+}
+
+func (tunnel *SSHTunnel) setErr(err error) {
+	tunnel.errLock.Lock()
+	defer tunnel.errLock.Unlock()
+	tunnel.err = err
 }
 
 func (tunnel *SSHTunnel) forward(localConn net.Conn) {

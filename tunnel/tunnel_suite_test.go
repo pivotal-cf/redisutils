@@ -5,6 +5,8 @@ import (
 	"strconv"
 	"testing"
 
+	"golang.org/x/crypto/ssh"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -43,4 +45,12 @@ func mustGetenvInt(env string) int {
 	intValue, err := strconv.Atoi(value)
 	Expect(err).NotTo(HaveOccurred())
 	return intValue
+}
+
+func makeSSHTunnel(local, server, remote Endpoint) *SSHTunnel {
+	return New(local, server, remote, &ssh.ClientConfig{
+		User: sshUser,
+		Auth: []ssh.AuthMethod{ssh.Password(sshPassword)},
+	},
+	)
 }

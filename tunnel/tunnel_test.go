@@ -4,39 +4,55 @@ import (
 	"github.com/garyburd/redigo/redis"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"golang.org/x/crypto/ssh"
 )
 
 var _ = Describe("tunnel", func() {
-	It("pings a redis instance behind a bastion", func() {
-		// SPIKE AHEAD
-		// This is a spike to test pinging a Redis instance behind a bastion
-		// local machine --- tcp ---> local server --- ssh ---> bastion host --- tcp ---> redis
-		// Run tunnel/scripts/test.sh
+	Describe("Endpoint", func() {
+		Describe("#String", func() {
+			It("is represented as `host:port`", func() {
+				endpoint := Endpoint{Host: "localhost", Port: 80}
+				Expect(endpoint.String()).To(Equal("localhost:80"))
+			})
+		})
+	})
 
-		// TODO
-		// Make this work in concourse (docker inside docker so you can docker your docker)
+	Describe("#SSHTunnel", func() {
+		var (
+			sshTunnel *SSHTunnel
+			local     = Endpoint{Host: "localhost", Port: 8005}
+		)
 
-		local := Endpoint{Host: "localhost", Port: 8005}
-		server := Endpoint{Host: sshHost, Port: sshPort}
-		remote := Endpoint{Host: redisHost, Port: redisPort}
+		BeforeEach(func() {
+			server := Endpoint{Host: sshHost, Port: sshPort}
+			remote := Endpoint{Host: redisHost, Port: redisPort}
+			sshTunnel = makeSSHTunnel(local, server, remote)
+		})
 
-		tunnel := &SSHTunnel{
-			Local:  local,
-			Server: server,
-			Remote: remote,
-			Config: &ssh.ClientConfig{
-				User: sshUser,
-				Auth: []ssh.AuthMethod{ssh.Password(sshPassword)},
-			},
-		}
+		Describe("#Start", func() {
+			var connection redis.Conn
 
-		go tunnel.Start()
-		conn, err := redis.Dial("tcp", "localhost:8005")
-		Expect(err).NotTo(HaveOccurred())
-		defer conn.Close()
-		reply, err := conn.Do("ping")
-		Expect(err).NotTo(HaveOccurred())
-		Expect(reply).To(Equal("PONG"))
+			BeforeEach(func() {
+				go sshTunnel.Start()
+
+				var dialErr error
+				connection, dialErr = redis.Dial("tcp", local.String())
+				Expect(dialErr).NotTo(HaveOccurred())
+			})
+
+			AfterEach(func() {
+				err := connection.Close()
+				Expect(err).NotTo(HaveOccurred())
+			})
+
+			It("creates a TCP tunnel", func() {
+				reply, err := connection.Do("ping")
+				Expect(err).NotTo(HaveOccurred())
+				Expect(reply).To(Equal("PONG"))
+			})
+
+			It("does not set an error", func() {
+				Expect(sshTunnel.GetErr()).NotTo(HaveOccurred())
+			})
+		})
 	})
 })

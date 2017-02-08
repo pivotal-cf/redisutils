@@ -1,18 +1,25 @@
 {
 	"ImportPath": "github.com/pivotal-cf/redisutils",
 	"GoVersion": "go1.7",
-	"GodepVersion": "v78",
+	"GodepVersion": "v79",
 	"Packages": [
 		"./..."
 	],
 	"Deps": [
 		{
+			"ImportPath": "github.com/BooleanCat/igo/inet",
+			"Comment": "v1.1.0",
+			"Rev": "c854336b70edd052d0963f5bf7309e31d1e8c6e3"
+		},
+		{
 			"ImportPath": "github.com/BooleanCat/igo/ios",
-			"Rev": "61e7b9157ee3038f6a1737d399f0fc126f62b143"
+			"Comment": "v1.1.0",
+			"Rev": "c854336b70edd052d0963f5bf7309e31d1e8c6e3"
 		},
 		{
 			"ImportPath": "github.com/BooleanCat/igo/ios/iexec",
-			"Rev": "61e7b9157ee3038f6a1737d399f0fc126f62b143"
+			"Comment": "v1.1.0",
+			"Rev": "c854336b70edd052d0963f5bf7309e31d1e8c6e3"
 		},
 		{
 			"ImportPath": "github.com/garyburd/redigo/internal",
@@ -168,6 +175,22 @@
 			"ImportPath": "github.com/onsi/gomega/types",
 			"Comment": "v1.0-151-gf1f0f38",
 			"Rev": "f1f0f388b31eca4e2cbe7a6dd8a3a1dfddda5b1c"
+		},
+		{
+			"ImportPath": "golang.org/x/crypto/curve25519",
+			"Rev": "c3b1d0d6d8690eaebe3064711b026770cc37efa3"
+		},
+		{
+			"ImportPath": "golang.org/x/crypto/ed25519",
+			"Rev": "c3b1d0d6d8690eaebe3064711b026770cc37efa3"
+		},
+		{
+			"ImportPath": "golang.org/x/crypto/ed25519/internal/edwards25519",
+			"Rev": "c3b1d0d6d8690eaebe3064711b026770cc37efa3"
+		},
+		{
+			"ImportPath": "golang.org/x/crypto/ssh",
+			"Rev": "c3b1d0d6d8690eaebe3064711b026770cc37efa3"
 		},
 		{
 			"ImportPath": "golang.org/x/sys/unix",

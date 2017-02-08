@@ -6,6 +6,7 @@ import (
 	"net"
 	"sync"
 
+	"github.com/BooleanCat/igo/inet"
 	"golang.org/x/crypto/ssh"
 )
 
@@ -28,22 +29,25 @@ type SSHTunnel struct {
 
 	err     error
 	errLock *sync.Mutex
+	net     inet.Net
 }
 
 //New is the correct way to initialise a SSHTunnel
 func New(local, server, remote Endpoint, config *ssh.ClientConfig) *SSHTunnel {
 	return &SSHTunnel{
-		Local:   local,
-		Server:  server,
-		Remote:  remote,
-		Config:  config,
+		Local:  local,
+		Server: server,
+		Remote: remote,
+		Config: config,
+
 		errLock: new(sync.Mutex),
+		net:     inet.New(),
 	}
 }
 
 //Start tunneling through Server to Remote
 func (tunnel *SSHTunnel) Start() {
-	listener, err := net.Listen("tcp", tunnel.Local.String())
+	listener, err := tunnel.net.Listen("tcp", tunnel.Local.String())
 	if err != nil {
 		tunnel.setErr(err)
 		return
@@ -64,7 +68,7 @@ func (tunnel *SSHTunnel) Start() {
 func (tunnel *SSHTunnel) GetErr() error {
 	tunnel.errLock.Lock()
 	defer tunnel.errLock.Unlock()
-	return nil
+	return tunnel.err
 }
 
 func (tunnel *SSHTunnel) setErr(err error) {

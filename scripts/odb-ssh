@@ -1,0 +1,21 @@
+#!/bin/bash
+shopt -s expand_aliases
+source ~/.bash_profile
+
+service_instance=$1
+
+guid=$(cf service ${service_instance} --guid)
+
+if [[ -n "$service_instance" ]]; then
+  echo ${guid}
+
+  bosh download manifest service-instance_${guid} /tmp/${guid}.yml
+  bosh deployment /tmp/${guid}.yml
+  # shift
+  # $@
+  bosh ssh
+else
+  echo "failed"
+fi
+
+rm /tmp/${guid}.yml

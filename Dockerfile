@@ -51,10 +51,10 @@ RUN rm -r monit-5.2.5 monit-5.2.5.tar.gz
 ENV GOPATH $HOME/go
 ENV GOROOT $HOME/goroot
 RUN mkdir $GOROOT $GOPATH
-RUN wget https://storage.googleapis.com/golang/go1.7.4.linux-amd64.tar.gz
-RUN tar -xvf go1.7.4.linux-amd64.tar.gz --strip 1 -C $GOROOT
+RUN wget https://storage.googleapis.com/golang/go1.10.linux-amd64.tar.gz
+RUN tar -xvf go1.10.linux-amd64.tar.gz --strip 1 -C $GOROOT
 ENV PATH "$PATH:$GOROOT/bin:$GOPATH/bin"
-RUN rm go1.7.4.linux-amd64.tar.gz
+RUN rm go1.10.linux-amd64.tar.gz
 
 # go packages installation
 RUN go get github.com/onsi/ginkgo/ginkgo

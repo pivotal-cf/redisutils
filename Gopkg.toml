@@ -1,0 +1,8 @@
+
+[[constraint]]
+  name = "gopkg.in/redis.v5"
+  version = "5.1.7"
+
+[prune]
+  go-tests = true
+  unused-packages = true

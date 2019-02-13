@@ -2,22 +2,27 @@
 
 
 [[projects]]
+  digest = "1:e7894e308f9fa928c9aa0cb731856f16e20ff0ce37ebcc839f8ae63381d58a4c"
   name = "github.com/BooleanCat/igo"
   packages = [
     "ios",
-    "ios/iexec"
+    "ios/iexec",
   ]
+  pruneopts = "UT"
   revision = "61e7b9157ee3038f6a1737d399f0fc126f62b143"
 
 [[projects]]
+  digest = "1:fe2b04bb878929f48e87214de8af5849001e4d7f1a8b486e05d868713409db21"
   name = "github.com/garyburd/redigo"
   packages = [
     "internal",
-    "redis"
+    "redis",
   ]
+  pruneopts = "UT"
   revision = "908534c8b97586a4597e3fa195875d2d26502b97"
 
 [[projects]]
+  digest = "1:db23ad3af65cecd809d2b8b14ee63c854dece8722de30ccbf0c6d11cefef5554"
   name = "github.com/onsi/ginkgo"
   packages = [
     ".",
@@ -36,11 +41,13 @@
     "reporters/stenographer",
     "reporters/stenographer/support/go-colorable",
     "reporters/stenographer/support/go-isatty",
-    "types"
+    "types",
   ]
+  pruneopts = "UT"
   revision = "a23f924ce96d61f963fb6219b8ff069d8d768cc2"
 
 [[projects]]
+  digest = "1:44584e15efe2c6e5955fd975964c3b2e1a56ba95b96f0f1b18feda053c404cde"
   name = "github.com/onsi/gomega"
   packages = [
     ".",
@@ -54,16 +61,20 @@
     "matchers/support/goraph/edge",
     "matchers/support/goraph/node",
     "matchers/support/goraph/util",
-    "types"
+    "types",
   ]
+  pruneopts = "UT"
   revision = "f1f0f388b31eca4e2cbe7a6dd8a3a1dfddda5b1c"
 
 [[projects]]
+  digest = "1:36e8440c31079d74414fd18f6b4ec10282f60c4abf3678ae3de48ab73010f532"
   name = "golang.org/x/sys"
   packages = ["unix"]
+  pruneopts = "UT"
   revision = "d75a52659825e75fff6158388dddc6a5b04f9ba5"
 
 [[projects]]
+  digest = "1:e5a1379b4f0cad2aabd75580598c3b8e19a027e8eed806e7b76b0ec949df4599"
   name = "gopkg.in/redis.v5"
   packages = [
     ".",
@@ -71,19 +82,44 @@
     "internal/consistenthash",
     "internal/hashtag",
     "internal/pool",
-    "internal/proto"
+    "internal/proto",
   ]
-  revision = "8fcba2ea878201b70c5a63dd416141d4ddbc601a"
-  version = "v5.1.7"
+  pruneopts = "UT"
+  revision = "a16aeec10ff407b1e7be6dd35797ccf5426ef0f0"
+  version = "v5.2.9"
 
 [[projects]]
+  digest = "1:10978cfda94a2069ac38ed0884b606aafe89f4578ff700b7845b02201a2d6b51"
   name = "gopkg.in/yaml.v2"
   packages = ["."]
+  pruneopts = "UT"
   revision = "f7716cbe52baa25d2e9b0d0da546fcf909fc16b4"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "1a398c8aacfffdd8c73d4c878b454c70baa26bf9d71637b9fed7d3ca5457a2db"
+  input-imports = [
+    "github.com/BooleanCat/igo/ios",
+    "github.com/BooleanCat/igo/ios/iexec",
+    "github.com/garyburd/redigo/redis",
+    "github.com/onsi/ginkgo",
+    "github.com/onsi/ginkgo/config",
+    "github.com/onsi/ginkgo/reporters",
+    "github.com/onsi/ginkgo/reporters/stenographer",
+    "github.com/onsi/ginkgo/reporters/stenographer/support/go-colorable",
+    "github.com/onsi/ginkgo/reporters/stenographer/support/go-isatty",
+    "github.com/onsi/ginkgo/types",
+    "github.com/onsi/gomega",
+    "github.com/onsi/gomega/format",
+    "github.com/onsi/gomega/matchers",
+    "github.com/onsi/gomega/matchers/support/goraph/bipartitegraph",
+    "github.com/onsi/gomega/matchers/support/goraph/edge",
+    "github.com/onsi/gomega/matchers/support/goraph/node",
+    "github.com/onsi/gomega/matchers/support/goraph/util",
+    "github.com/onsi/gomega/types",
+    "golang.org/x/sys/unix",
+    "gopkg.in/redis.v5",
+    "gopkg.in/yaml.v2",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1

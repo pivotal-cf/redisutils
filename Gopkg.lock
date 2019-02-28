@@ -12,14 +12,15 @@
   revision = "61e7b9157ee3038f6a1737d399f0fc126f62b143"
 
 [[projects]]
-  digest = "1:fe2b04bb878929f48e87214de8af5849001e4d7f1a8b486e05d868713409db21"
-  name = "github.com/garyburd/redigo"
+  digest = "1:38ec74012390146c45af1f92d46e5382b50531247929ff3a685d2b2be65155ac"
+  name = "github.com/gomodule/redigo"
   packages = [
     "internal",
     "redis",
   ]
   pruneopts = "UT"
-  revision = "908534c8b97586a4597e3fa195875d2d26502b97"
+  revision = "9c11da706d9b7902c6da69c592f75637793fe121"
+  version = "v2.0.0"
 
 [[projects]]
   digest = "1:db23ad3af65cecd809d2b8b14ee63c854dece8722de30ccbf0c6d11cefef5554"
@@ -100,7 +101,7 @@
   analyzer-version = 1
   input-imports = [
     "github.com/BooleanCat/igo/ios/iexec",
-    "github.com/garyburd/redigo/redis",
+    "github.com/gomodule/redigo/redis",
     "github.com/onsi/ginkgo",
     "github.com/onsi/gomega",
     "gopkg.in/redis.v5",

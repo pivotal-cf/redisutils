@@ -2,14 +2,15 @@
 
 
 [[projects]]
-  digest = "1:e7894e308f9fa928c9aa0cb731856f16e20ff0ce37ebcc839f8ae63381d58a4c"
+  digest = "1:401715131bcd4d4c0849e0335e48152048e7c3d6c61ba3fea2c8909a26ead933"
   name = "github.com/BooleanCat/igo"
   packages = [
     "ios",
     "ios/iexec",
   ]
   pruneopts = "UT"
-  revision = "61e7b9157ee3038f6a1737d399f0fc126f62b143"
+  revision = "a81f0345d8b9599231d9fe873e3462c3aa892e32"
+  version = "v1.3.0"
 
 [[projects]]
   digest = "1:38ec74012390146c45af1f92d46e5382b50531247929ff3a685d2b2be65155ac"
@@ -23,7 +24,21 @@
   version = "v2.0.0"
 
 [[projects]]
-  digest = "1:db23ad3af65cecd809d2b8b14ee63c854dece8722de30ccbf0c6d11cefef5554"
+  digest = "1:a1038ef593beb4771c8f0f9c26e8b00410acd800af5c6864651d9bf160ea1813"
+  name = "github.com/hpcloud/tail"
+  packages = [
+    ".",
+    "ratelimiter",
+    "util",
+    "watch",
+    "winfile",
+  ]
+  pruneopts = "UT"
+  revision = "a30252cb686a21eb2d0b98132633053ec2f7f1e5"
+  version = "v1.0.0"
+
+[[projects]]
+  digest = "1:717e9abbff2a22363e45a4ff0ea7eca541dbf20d63e1b11fdd00cb31cb932140"
   name = "github.com/onsi/ginkgo"
   packages = [
     ".",
@@ -34,6 +49,7 @@
     "internal/leafnodes",
     "internal/remote",
     "internal/spec",
+    "internal/spec_iterator",
     "internal/specrunner",
     "internal/suite",
     "internal/testingtproxy",
@@ -45,10 +61,11 @@
     "types",
   ]
   pruneopts = "UT"
-  revision = "a23f924ce96d61f963fb6219b8ff069d8d768cc2"
+  revision = "72b6ab036f78c4bf1a9748c3941dd7c3de54917a"
+  version = "v1.10.2"
 
 [[projects]]
-  digest = "1:44584e15efe2c6e5955fd975964c3b2e1a56ba95b96f0f1b18feda053c404cde"
+  digest = "1:5a9c247f0da47393b38eb20b53077be9e25452d8b2de1fdfec857233a18c503c"
   name = "github.com/onsi/gomega"
   packages = [
     ".",
@@ -65,14 +82,65 @@
     "types",
   ]
   pruneopts = "UT"
-  revision = "f1f0f388b31eca4e2cbe7a6dd8a3a1dfddda5b1c"
+  revision = "bdebf9e0ece900259084cfa4121b97ce1a540939"
+  version = "v1.7.0"
 
 [[projects]]
-  digest = "1:36e8440c31079d74414fd18f6b4ec10282f60c4abf3678ae3de48ab73010f532"
+  branch = "master"
+  digest = "1:94002ae1eb37d085f9aca990b3246b0cf6f0d114b5c0924aedd8eaf2a912143f"
+  name = "golang.org/x/net"
+  packages = [
+    "html",
+    "html/atom",
+    "html/charset",
+  ]
+  pruneopts = "UT"
+  revision = "d66e71096ffb9f08f36d9aefcae80ce319de6d68"
+
+[[projects]]
+  branch = "master"
+  digest = "1:7c927f17d868be652a4cfe7de23e4292dea5b14d974a1d536e3b7cb7e79fd695"
   name = "golang.org/x/sys"
   packages = ["unix"]
   pruneopts = "UT"
-  revision = "d75a52659825e75fff6158388dddc6a5b04f9ba5"
+  revision = "06d7bd2c5f4f4a6cc6e910b611851044253bd7d1"
+
+[[projects]]
+  digest = "1:8a0baffd5559acaa560f854d7d525c02f4fec2d4f8a214398556fb661a10f6e0"
+  name = "golang.org/x/text"
+  packages = [
+    "encoding",
+    "encoding/charmap",
+    "encoding/htmlindex",
+    "encoding/internal",
+    "encoding/internal/identifier",
+    "encoding/japanese",
+    "encoding/korean",
+    "encoding/simplifiedchinese",
+    "encoding/traditionalchinese",
+    "encoding/unicode",
+    "internal/gen",
+    "internal/language",
+    "internal/language/compact",
+    "internal/tag",
+    "internal/utf8internal",
+    "language",
+    "runes",
+    "transform",
+    "unicode/cldr",
+  ]
+  pruneopts = "UT"
+  revision = "342b2e1fbaa52c93f31447ad2c6abc048c63e475"
+  version = "v0.3.2"
+
+[[projects]]
+  digest = "1:abeb38ade3f32a92943e5be54f55ed6d6e3b6602761d74b4aab4c9dd45c18abd"
+  name = "gopkg.in/fsnotify.v1"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "c2828203cd70a50dcccfb2761f8b1f8ceef9a8e9"
+  source = "https://github.com/fsnotify/fsnotify.git"
+  version = "v1.4.7"
 
 [[projects]]
   digest = "1:e5a1379b4f0cad2aabd75580598c3b8e19a027e8eed806e7b76b0ec949df4599"
@@ -90,11 +158,20 @@
   version = "v5.2.9"
 
 [[projects]]
-  digest = "1:10978cfda94a2069ac38ed0884b606aafe89f4578ff700b7845b02201a2d6b51"
+  branch = "v1"
+  digest = "1:0caa92e17bc0b65a98c63e5bc76a9e844cd5e56493f8fdbb28fad101a16254d9"
+  name = "gopkg.in/tomb.v1"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "dd632973f1e7218eb1089048e0798ec9ae7dceb8"
+
+[[projects]]
+  digest = "1:59f10c1537d2199d9115d946927fe31165959a95190849c82ff11e05803528b0"
   name = "gopkg.in/yaml.v2"
   packages = ["."]
   pruneopts = "UT"
-  revision = "f7716cbe52baa25d2e9b0d0da546fcf909fc16b4"
+  revision = "f221b8435cfb71e54062f6c6e99e9ade30b124d5"
+  version = "v2.2.4"
 
 [solve-meta]
   analyzer-name = "dep"

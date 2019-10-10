@@ -3,6 +3,10 @@
   name = "gopkg.in/redis.v5"
   version = "5.1.7"
 
+[[override]]
+  name = "gopkg.in/fsnotify.v1"
+  source = "https://github.com/fsnotify/fsnotify.git"
+
 [prune]
   go-tests = true
   unused-packages = true

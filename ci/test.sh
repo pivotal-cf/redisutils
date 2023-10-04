@@ -3,4 +3,4 @@
 cp -r redisutils $HOME/redisutils
 sudo -E -u vcap \
   PATH=$PATH:$GOPATH/bin \
-  $HOME/redisutils/docker/test.sh . -r -v --slowSpecThreshold=15
+  $HOME/redisutils/docker/test.sh . -r -v --slow-spec-threshold=15

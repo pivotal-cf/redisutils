@@ -2,7 +2,7 @@ package redis_test
 
 import (
 	redigo "github.com/gomodule/redigo/redis"
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 
 	"github.com/pivotal-cf/redisutils/redis"
 )

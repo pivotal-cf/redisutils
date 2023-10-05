@@ -57,7 +57,7 @@ ENV PATH "$PATH:$GOROOT/bin:$GOPATH/bin"
 RUN rm go1.10.linux-amd64.tar.gz
 
 # go packages installation
-RUN go get github.com/onsi/ginkgo/ginkgo
-RUN cd $GOPATH/src/github.com/onsi/ginkgo/ginkgo && git checkout a23f924ce96d61f963fb6219b8ff069d8d768cc2
-RUN go install github.com/onsi/ginkgo/ginkgo
+RUN go get github.com/onsi/ginkgo/v2/ginkgo
+RUN cd $GOPATH/src/github.com/onsi/ginkgo/v2/ginkgo && git checkout 1d2fb67b14d3a770782be056751836928af84c5d
+RUN go install github.com/onsi/ginkgo/v2/ginkgo
 RUN go get github.com/tools/godep

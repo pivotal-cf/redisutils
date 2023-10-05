@@ -34,7 +34,7 @@ if [ "$LOCAL" = true ]; then
   exit $?
 fi
 
-GINKGO_ARGS=${GINKGO_ARGS:-". -r --race --slowSpecThreshold=15"}
+GINKGO_ARGS=${GINKGO_ARGS:-". -r --race --poll-progress-after=15s"}
 
 if [ "$SKIP_BUILD" != true ]; then
   echo "Building docker image..."

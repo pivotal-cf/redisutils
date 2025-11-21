@@ -1,10 +1,10 @@
 module github.com/pivotal-cf/redisutils
 
-go 1.21
+go 1.25
 
 require (
 	github.com/BooleanCat/igo v1.3.0
-	github.com/gomodule/redigo v2.0.0+incompatible
+	github.com/gomodule/redigo v1.9.3
 	github.com/onsi/ginkgo/v2 v2.12.1
 	github.com/onsi/gomega v1.27.10
 	gopkg.in/redis.v5 v5.2.9
